@@ -37,7 +37,9 @@ class ProfileController extends Controller
                     'status'  => 'success',
                     'type'    => 'agent',
                     'name'    => $agent->name,
-                    'profile' => $agent->profile,
+                    'data'  => [
+                        'profile'     => $service->profile,
+                    ],
                 ]);
             }
 
@@ -53,7 +55,9 @@ class ProfileController extends Controller
                     'status'  => 'success',
                     'type'    => 'service',
                     'name'    => $service->name,
-                    'profile' => $service->profile,
+                    'data'  => [
+                        'profile'     => $service->profile,
+                    ],
                 ]);
             }
 
