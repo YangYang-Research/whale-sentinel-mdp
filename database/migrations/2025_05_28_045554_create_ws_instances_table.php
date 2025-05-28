@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ws_services', function (Blueprint $table) {
+        Schema::create('ws_instances', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255)->unique();
-            $table->text('description')->nullable();
-            $table->text('profile');
-            $table->unsignedBigInteger('application_id');
-            $table->foreign('application_id')->references('id')->on('applications')->onDelete('cascade');
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->string('status')->default('active'); // e.g., active, inactive, deprecated
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('Services');
+        Schema::dropIfExists('Applications');
     }
 };

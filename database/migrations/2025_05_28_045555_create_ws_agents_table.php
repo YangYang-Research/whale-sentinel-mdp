@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('ws_agents', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description')->nullable();
-            $table->string('status')->default('active'); // e.g., active, inactive, deprecated
+            $table->string('name', 255)->unique();
+            $table->text('description')->nullable();
+            $table->text('profile');
+            $table->unsignedBigInteger('instance_id');
+            $table->foreign('instance_id')->references('id')->on('ws_instances')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('Applications');
+        Schema::dropIfExists('Agents');
     }
 };

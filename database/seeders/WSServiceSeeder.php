@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ApplicationsSeeder extends Seeder
+class WSServiceSeeder extends Seeder
 {
     /**
      * Run the database seeds.

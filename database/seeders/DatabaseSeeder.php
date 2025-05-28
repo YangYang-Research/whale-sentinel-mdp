@@ -16,10 +16,10 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
-            ApplicationsSeeder::class,
-            AgentsSeeder::class,
-            ServicesSeeder::class,
-            ProfilesSeeder::class,
+            WSInstanceSeeder::class,
+            WSAgentSeeder::class,
+            WSServiceSeeder::class,
+            WSProfileSeeder::class,
         ]);
     }
 }
