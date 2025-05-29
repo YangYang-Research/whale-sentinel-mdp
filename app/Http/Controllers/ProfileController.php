@@ -38,7 +38,7 @@ class ProfileController extends Controller
                     'type'    => 'agent',
                     'name'    => $agent->name,
                     'data'  => [
-                        'profile'     => $service->profile,
+                        'profile'     => $agent->profile,
                     ],
                 ]);
             }
@@ -65,7 +65,7 @@ class ProfileController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred while processing your request.'
+                'message' => 'An error occurred while processing your request.',
             ], 500);
         }
     }
