@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\WSService;
 use App\Models\WSAgent;
+use App\Traits\ProfileValidationTrait;
 
 class ProfileController extends Controller
 {
+    use ProfileValidationTrait;
+
     public function getProfile(Request $request)
     {
         try {
@@ -76,7 +79,7 @@ class ProfileController extends Controller
             $validated = $request->validate([
                     'type' => 'required|in:agent,service',
                     'key'  => ['required','string', 'max:255'],
-                    'payload' => 'required|array'
+                    'profile' => 'required|array'
                 ]);
 
             if ($validated['type'] === 'agent' && !preg_match('/^ws_agent_.*/', $validated['key'])) {
@@ -88,7 +91,15 @@ class ProfileController extends Controller
 
             $type = $validated['type'];
             $key = $validated['key'];
-            $payload = $validated['payload'];
+            $newProfileData = $validated['profile'];
+
+            $validation = $this->validatePayloadKeysExistHardcoded($newProfileData);
+            if ($validation !== true) {
+                return response()->json([
+                    'message' => 'Invalid payload keys.',
+                    'invalid_keys' => $validation
+                ], 422);
+            }
 
             if ($type === 'agent') {
                 $agent = WsAgent::where('name', $key)->first();
@@ -98,13 +109,21 @@ class ProfileController extends Controller
                         'message' => 'Agent not found'
                     ], 404);
                 }
-                $profile = json_decode($agent->profile, true);
-                if (!is_array($profile)) {
-                    $profile = ['profile' => []];
+                $currentProfile = json_decode($agent->profile, true);
+                if (!is_array($currentProfile)) {
+                    $currentProfile = ['profile' => []];
                 }
-                $profile['profile'] = array_merge($profile['profile'], $payload);
 
-                $agent->profile = json_encode($profile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                if (!isset($currentProfile['profile']) || !is_array($currentProfile['profile'])) {
+                    $currentProfile['profile'] = [];
+                }
+
+                if (isset($newProfileData['profile'])) {
+                    unset($newProfileData['profile']);
+                }
+                $currentProfile['profile'] = $this->deepMerge($currentProfile['profile'], $newProfileData);
+
+                $agent->profile = json_encode($currentProfile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 $agent->save();
 
                 return response()->json([
@@ -125,14 +144,24 @@ class ProfileController extends Controller
                         'message' => 'Service not found'
                     ], 404);
                 }
-                $profile = json_decode($service->profile, true);
-                if (!is_array($profile)) {
-                    $profile = ['profile' => []];
+                $currentProfile = json_decode($service->profile, true);
+                if (!is_array($currentProfile)) {
+                    $currentProfile = ['profile' => []];
                 }
-                $profile['profile'] = array_merge($profile['profile'], $payload);
+                
+                if (!isset($currentProfile['profile']) || !is_array($currentProfile['profile'])) {
+                    $currentProfile['profile'] = [];
+                }
 
-                $agent->profile = json_encode($profile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                if (isset($newProfileData['profile'])) {
+                    unset($newProfileData['profile']);
+                }
+                
+                $currentProfile['profile'] = $this->deepMerge($currentProfile['profile'], $newProfileData);
+
+                $agent->profile = json_encode($currentProfile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 $agent->save();
+
                 return response()->json([
                     'status'  => 'success',
                     'type'    => 'service',
@@ -150,5 +179,21 @@ class ProfileController extends Controller
                 'message' => 'An error occurred while processing your request.',
             ], 500);
         }
+    }
+
+    /**
+     * Recursively merge nested arrays (overwrite right over left).
+     */
+    private function deepMerge(array $original, array $new): array
+    {
+        foreach ($new as $key => $value) {
+            if (is_array($value) && isset($original[$key]) && is_array($original[$key])) {
+                $original[$key] = $this->deepMerge($original[$key], $value);
+            } else {
+                $original[$key] = $value;
+            }
+        }
+
+        return $original;
     }
 }
