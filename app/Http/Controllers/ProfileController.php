@@ -69,4 +69,86 @@ class ProfileController extends Controller
             ], 500);
         }
     }
+
+    public function syncProfile(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                    'type' => 'required|in:agent,service',
+                    'key'  => ['required','string', 'max:255'],
+                    'payload' => 'required|array'
+                ]);
+
+            if ($validated['type'] === 'agent' && !preg_match('/^ws_agent_.*/', $validated['key'])) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'The key must start with "ws_agent_" for type "agent".'
+                ], 422);
+            }
+
+            $type = $validated['type'];
+            $key = $validated['key'];
+            $payload = $validated['payload'];
+
+            if ($type === 'agent') {
+                $agent = WsAgent::where('name', $key)->first();
+                if (!$agent) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Agent not found'
+                    ], 404);
+                }
+                $profile = json_decode($agent->profile, true);
+                if (!is_array($profile)) {
+                    $profile = ['profile' => []];
+                }
+                $profile['profile'] = array_merge($profile['profile'], $payload);
+
+                $agent->profile = json_encode($profile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                $agent->save();
+
+                return response()->json([
+                    'status'  => 'success',
+                    'type'    => 'agent',
+                    'name'    => $agent->name,
+                    'data'  => [
+                        'profile'     => $agent->profile,
+                    ],
+                ]);
+            }
+
+            if ($type === 'service') {
+                $service = WsService::where('name', $key)->first();
+                if (!$service) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Service not found'
+                    ], 404);
+                }
+                $profile = json_decode($service->profile, true);
+                if (!is_array($profile)) {
+                    $profile = ['profile' => []];
+                }
+                $profile['profile'] = array_merge($profile['profile'], $payload);
+
+                $agent->profile = json_encode($profile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                $agent->save();
+                return response()->json([
+                    'status'  => 'success',
+                    'type'    => 'service',
+                    'name'    => $service->name,
+                    'data'  => [
+                        'profile'     => $service->profile,
+                    ],
+                ]);
+            }
+
+            return response()->json(['message' => 'Invalid type'], 400);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while processing your request.',
+            ], 500);
+        }
+    }
 }
