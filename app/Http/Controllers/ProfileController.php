@@ -8,6 +8,7 @@ use App\Models\WSAgent;
 use App\Traits\ProfileValidationTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
@@ -65,7 +66,7 @@ class ProfileController extends Controller
                     ],
                     'event_info' => '',
                     'request_created_at' => $requestCreatedAt,
-                    'request_processed_at' => now()->toIso8601String(),
+                    'request_processed_at' => Carbon::now('UTC')->format('Y-m-d\TH:i:s\Z')
                 ]);
             }
 
@@ -88,7 +89,7 @@ class ProfileController extends Controller
                     ],
                     'event_info' => '',
                     'request_created_at' => $requestCreatedAt,
-                    'request_processed_at' => now()->toIso8601String(),
+                    'request_processed_at' => Carbon::now('UTC')->format('Y-m-d\TH:i:s\Z'),
                 ]);
             }
 
@@ -181,7 +182,7 @@ class ProfileController extends Controller
                     ],
                     'event_info' => '',
                     'request_created_at' => $requestCreatedAt,
-                    'request_processed_at' => now()->toIso8601String(),
+                    'request_processed_at' => Carbon::now('UTC')->format('Y-m-d\TH:i:s\Z'),
                 ]);
             }
 
@@ -221,7 +222,7 @@ class ProfileController extends Controller
                     ],
                     'event_info' => '',
                     'request_created_at' => $requestCreatedAt,
-                    'request_processed_at' => now()->toIso8601String(),
+                    'request_processed_at' => Carbon::now('UTC')->format('Y-m-d\TH:i:s\Z'),
                 ]);
             }
 
