@@ -22,7 +22,7 @@ class ProfileController extends Controller
                 'payload.data.key'  => 'required|string|max:255',
                 'request_created_at' => [
                     'required',
-                    'date_format:Y-m-d\TH:i:sP',
+                    'date_format:Y-m-d\TH:i:s\Z',
                 ],
             ]); 
 
@@ -96,7 +96,7 @@ class ProfileController extends Controller
         } catch (\Exception $e) {
             dd($e);
             return response()->json([
-                'status' => 'error',
+                'status' => 'Error',
                 'message' => 'An error occurred while processing your request.',
             ], 500);
         }
@@ -112,7 +112,7 @@ class ProfileController extends Controller
                 'payload.data.profile' => 'required|array',
                 'request_created_at' => [
                     'required',
-                    'date_format:Y-m-d\TH:i:sP',
+                    'date_format:Y-m-d\TH:i:s\Z',
                 ],
             ]); 
 
@@ -228,7 +228,7 @@ class ProfileController extends Controller
             return response()->json(['message' => 'Invalid type'], 400);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => 'error',
+                'status' => 'Error',
                 'message' => 'An error occurred while processing your request.',
             ], 500);
         }
