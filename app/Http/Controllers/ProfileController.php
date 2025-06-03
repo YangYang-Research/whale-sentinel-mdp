@@ -56,7 +56,7 @@ class ProfileController extends Controller
                 }
 
                 return response()->json([
-                    'status'  => 'success',
+                    'status'  => 'Success',
                     'message' => 'Request processed successfully',
                     'data'  => [
                         'type'    => 'agent',
@@ -79,7 +79,7 @@ class ProfileController extends Controller
                 }
 
                 return response()->json([
-                    'status'  => 'success',
+                    'status'  => 'Success',
                     'message' => 'Request processed successfully',
                     'data'  => [
                         'type'    => 'service',
@@ -172,7 +172,7 @@ class ProfileController extends Controller
                 $agent->save();
 
                 return response()->json([
-                    'status'  => 'success',
+                    'status'  => 'Success',
                     'message' => 'Request processed successfully',
                     'data'  => [
                         'type'    => 'agent',
@@ -212,7 +212,7 @@ class ProfileController extends Controller
                 $service->save();
 
                 return response()->json([
-                    'status'  => 'success',
+                    'status'  => 'Success',
                     'message' => 'Request processed successfully',
                     'data'  => [
                         'type'    => 'service',
