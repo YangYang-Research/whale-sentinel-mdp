@@ -30,8 +30,7 @@ class ProfileController extends Controller
                 return response()->json([
                     'code' => 400,
                     'status' => 'Fail',
-                    'message' => 'Validate Failed',
-                    'errors' => $validator->errors(),
+                    'message' => $validator->errors(),
                 ]);
             }
 
@@ -121,8 +120,7 @@ class ProfileController extends Controller
                 return response()->json([
                     'code' => 400,
                     'status' => 'Fail',
-                    'message' => 'Validate Failed',
-                    'errors' => $validator->errors(),
+                    'message' => $validator->errors(),
                 ]);
             }
 
