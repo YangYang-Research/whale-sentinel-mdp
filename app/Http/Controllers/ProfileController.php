@@ -36,7 +36,7 @@ class ProfileController extends Controller
 
             if ($request['payload']['data']['type'] === 'agent' && !preg_match('/^ws_agent_.*/', $request['payload']['data']['key'])) {
                 return response()->json([
-                    'status' => 'error',
+                    'status' => 'Error',
                     'message' => 'The key must start with "ws_agent_" for type "agent".'
                 ], 422);
             }
@@ -50,7 +50,7 @@ class ProfileController extends Controller
                 $agent = WsAgent::where('name', $key)->first();
                 if (!$agent) {
                     return response()->json([
-                        'status' => 'error',
+                        'status' => 'Error',
                         'message' => 'Agent not found'
                     ], 404);
                 }
@@ -73,7 +73,7 @@ class ProfileController extends Controller
                 $service = WsService::where('name', $key)->first();
                 if (!$service) {
                     return response()->json([
-                        'status' => 'error',
+                        'status' => 'Error',
                         'message' => 'Service not found'
                     ], 404);
                 }
@@ -126,7 +126,7 @@ class ProfileController extends Controller
 
             if ($request['payload']['data']['type'] === 'agent' && !preg_match('/^ws_agent_.*/', $request['payload']['data']['key'])) {
                 return response()->json([
-                    'status' => 'error',
+                    'status' => 'Error',
                     'message' => 'The key must start with "ws_agent_" for type "agent".'
                 ], 422);
             }
@@ -149,7 +149,7 @@ class ProfileController extends Controller
                 $agent = WsAgent::where('name', $key)->first();
                 if (!$agent) {
                     return response()->json([
-                        'status' => 'error',
+                        'status' => 'Error',
                         'message' => 'Agent not found'
                     ], 404);
                 }
@@ -189,7 +189,7 @@ class ProfileController extends Controller
                 $service = WsService::where('name', $key)->first();
                 if (!$service) {
                     return response()->json([
-                        'status' => 'error',
+                        'status' => 'Error',
                         'message' => 'Service not found'
                     ], 404);
                 }
