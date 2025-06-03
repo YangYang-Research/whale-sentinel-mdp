@@ -22,7 +22,7 @@ class ProfileController extends Controller
                 'payload.data.key'  => 'required|string|max:255',
                 'request_created_at' => [
                     'required',
-                    'date_format:Y-m-d\TH:i:s\Z',
+                    'date_format:Y-m-d\TH:i:sP',
                 ],
             ]); 
 
@@ -112,7 +112,7 @@ class ProfileController extends Controller
                 'payload.data.profile' => 'required|array',
                 'request_created_at' => [
                     'required',
-                    'date_format:Y-m-d\TH:i:s\Z',
+                    'date_format:Y-m-d\TH:i:sP',
                 ],
             ]); 
 
