@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             WSAgentSeeder::class,
             WSServiceSeeder::class,
             WSProfileSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
