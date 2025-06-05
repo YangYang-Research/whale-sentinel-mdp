@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\WSAgent;
 
 class WSInstance extends Model
 {
@@ -22,6 +23,6 @@ class WSInstance extends Model
      */
     public function agents()
     {
-        return $this->hasMany(WsAgent::class);
+        return $this->hasMany(WSAgent::class);
     }
 }

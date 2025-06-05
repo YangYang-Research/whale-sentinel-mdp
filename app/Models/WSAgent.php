@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\WSInstance;
 
 class WSAgent extends Model
 {
@@ -13,9 +14,10 @@ class WSAgent extends Model
 
     protected $fillable = [
         'name',
+        'key',
         'description',
         'profile',
-        'application_id',
+        'instance_id',
     ];
 
     /**

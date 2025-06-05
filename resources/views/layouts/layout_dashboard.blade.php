@@ -3,6 +3,7 @@
 
 <head>
     @include('dashboards.includes.head')
+    @stack('css')
 </head>
 
 <body id="page-top">
@@ -39,7 +40,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        <span>Copyright &copy; YangYang-Research 2025</span>
                     </div>
                 </div>
             </footer>
@@ -81,7 +82,7 @@
     </div>
 
     @include('dashboards.includes.script')
-
+    @stack('script')
 </body>
 
 </html>

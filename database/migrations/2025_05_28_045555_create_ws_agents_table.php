@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('ws_agents', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255)->unique();
+            $table->string('key', 255);
             $table->text('description')->nullable();
+            $table->string('ipaddress')->nullable();
+            $table->string('type', 255);
             $table->text('profile');
             $table->unsignedBigInteger('instance_id');
             $table->foreign('instance_id')->references('id')->on('ws_instances')->onDelete('cascade');

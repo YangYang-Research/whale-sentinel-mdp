@@ -65,7 +65,9 @@ class WSAgentSeeder extends Seeder
         DB::table('ws_agents')->insert([
             [
                 'name' => 'ws_agent_1',
+                'key' => 'ae054e496e6643fbdc5214e2a2de74c255655e62',
                 'description' => 'Whale Sentinel Agent 1',
+                'type' => 'python-flask-agent',
                 'profile' => json_encode($profile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
                 'instance_id' => $instanceId,
                 'created_at' => now(),

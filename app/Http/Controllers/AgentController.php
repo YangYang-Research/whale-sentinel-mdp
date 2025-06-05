@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\WSAgent;
+use App\Models\WSInstance;
 
 class AgentController extends Controller
 {
@@ -11,7 +13,10 @@ class AgentController extends Controller
      */
     public function index()
     {
-        //
+        $agents = WSAgent::all();
+        return view ('dashboards.agent.index', [
+            'agents' => $agents
+        ]);
     }
 
     /**
@@ -19,7 +24,19 @@ class AgentController extends Controller
      */
     public function create()
     {
-        //
+        $instances = WSInstance::all();
+        $languages = [
+            'python' => ['icon' => 'python.svg', 'agents' => ['FlaskAgent', 'FastAPIAgent']],
+            'java' => ['icon' => 'java.svg', 'agents' => ['SpringAgent', 'VertxAgent']],
+            'golang' => ['icon' => 'golang.svg', 'agents' => ['GoAgent']],
+            'javascript' => ['icon' => 'javascript.svg', 'agents' => ['NodeAgent']],
+            'php' => ['icon' => 'php.svg', 'agents' => ['LaravelAgent', 'SymfonyAgent']],
+            'ruby' => ['icon' => 'ruby.svg', 'agents' => ['RailsAgent']],
+        ];  
+        return view ('dashboards.agent.create', [
+            'instances' => $instances,
+            'languages' => $languages,
+        ]);
     }
 
     /**

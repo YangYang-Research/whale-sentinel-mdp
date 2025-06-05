@@ -12,15 +12,14 @@ class LoginController extends Controller
 {
     public function getLogin()
     {
-        // dd($user = Sentinel::check());
-        // if ($user = Sentinel::check()){
-        //     $user = Sentinel::getUser()->id;
-        //     $username = \DB::table('users')
-        //         ->where('id', '=', $user)
-        //         ->selectRaw("CONCAT(first_name, ' ', last_name) as full_name")
-        //         ->value('full_name');
-        //     return redirect()->route('dashboard.index')->with(['status' => 'Welcome '.$username.'!']);;
-        // }
+        if ($user = Sentinel::check()){
+            $user = Sentinel::getUser()->id;
+            $username = \DB::table('users')
+                ->where('id', '=', $user)
+                ->selectRaw("CONCAT(first_name, ' ', last_name) as full_name")
+                ->value('full_name');
+            return redirect()->route('dashboard.index')->with(['status' => 'Welcome '.$username.'!']);;
+        }
         return view("authentications.login");
         
     }
