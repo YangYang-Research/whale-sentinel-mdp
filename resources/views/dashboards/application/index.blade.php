@@ -8,7 +8,7 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Application</h1>
     <a href="{{ route('application.create') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-            class="fas fa-download fa-sm text-white-50"></i> Create New Application</a>
+            class="fas fa-plus fa-sm text-white-50"></i> Create New Application</a>
 </div>
 
 <!-- DataTales Example -->

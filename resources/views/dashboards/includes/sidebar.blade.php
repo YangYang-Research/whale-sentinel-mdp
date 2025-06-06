@@ -29,31 +29,31 @@
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
         <a class="nav-link" href="{{ route('instance.index') }}">
-            <i class="fas fa-fw fa-table"></i>
+            <i class="fas fa-fw fa-server"></i>
             <span>Instance</span></a>
     </li>
 
     <li class="nav-item">
         <a class="nav-link" href="{{ route('application.index') }}">
-            <i class="fas fa-fw fa-table"></i>
+            <i class="fas fa-fw fa-splotch"></i>
             <span>Application</span></a>
     </li>
 
     <li class="nav-item">
         <a class="nav-link" href="{{ route('agent.index') }}">
-            <i class="fas fa-fw fa-table"></i>
+            <i class="fas fa-fw fa-shield-virus"></i>
             <span>Agent</span></a>
     </li>
 
     <li class="nav-item">
         <a class="nav-link" href="{{ route('service.index') }}">
-            <i class="fas fa-fw fa-table"></i>
+            <i class="fas fa-fw fa-satellite"></i>
             <span>Service</span></a>
     </li>
 
     <li class="nav-item">
         <a class="nav-link" href="{{ route('profile.index') }}">
-            <i class="fas fa-fw fa-table"></i>
+            <i class="fas fa-fw fa-code"></i>
             <span>Template Profile</span></a>
     </li>
 
