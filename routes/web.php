@@ -3,10 +3,11 @@
 use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\InstanceController;
-use App\Http\Controllers\AgentController;
-use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\Dashboard\MainDashboardController;
+use App\Http\Controllers\Dashboard\InstanceController;
+use App\Http\Controllers\Dashboard\ApplicationController;
+use App\Http\Controllers\Dashboard\AgentController;
+use App\Http\Controllers\Dashboard\ServiceController;
 
 Route::get('/', function () {
         return view('welcome');
@@ -21,11 +22,13 @@ Route::group(['prefix' => 'whale-sentinel'], function() {
 
         Route::get('/dashboard', function () {return redirect()->route('dashboard.index');})->name('root');
 
-        Route::resource('dashboard', DashboardController::class);
+        Route::resource('dashboard', MainDashboardController::class);
 
         Route::group(['prefix' => 'management'], function() {
 
             Route::resource('instance', InstanceController::class);
+
+            Route::resource('application', ApplicationController::class);
 
             Route::resource('agent', AgentController::class);
 

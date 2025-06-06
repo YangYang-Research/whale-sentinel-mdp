@@ -27,10 +27,16 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
-     <li class="nav-item">
+    <li class="nav-item">
         <a class="nav-link" href="{{ route('instance.index') }}">
             <i class="fas fa-fw fa-table"></i>
             <span>Instance</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('application.index') }}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Application</span></a>
     </li>
 
     <li class="nav-item">

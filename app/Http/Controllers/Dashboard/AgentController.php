@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\WSAgent;
-use App\Models\WSInstance;
+use App\Models\WSApplication;
 
 class AgentController extends Controller
 {
@@ -24,7 +25,7 @@ class AgentController extends Controller
      */
     public function create()
     {
-        $instances = WSInstance::all();
+        $applications = WSApplication::all();
         $languages = [
             'python' => ['icon' => 'python.svg', 'agents' => ['FlaskAgent', 'FastAPIAgent']],
             'java' => ['icon' => 'java.svg', 'agents' => ['SpringAgent', 'VertxAgent']],
