@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\WSInstance;
+use App\Models\WsApplication;
 
 class WSAgent extends Model
 {
@@ -21,10 +21,11 @@ class WSAgent extends Model
     ];
 
     /**
-     * Get the instance that owns the agent.
+     * Get the application that owns the agent.
      */
-    public function instance()
+    public function application()
     {
-        return $this->belongsTo(WSInstance::class);
+        return $this->belongsTo(WsApplication::class, 'application_id');
     }
+
 }

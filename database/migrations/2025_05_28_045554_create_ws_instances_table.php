@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ws_instances', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 255);
             $table->string('description')->nullable();
             $table->string('status')->default('active'); // e.g., active, inactive, deprecated
             $table->timestamps();
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('Applications');
+        Schema::dropIfExists('ws_instances');
     }
 };

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             WSInstanceSeeder::class,
+            WSApplicationSeeder::class,
             WSAgentSeeder::class,
             WSServiceSeeder::class,
             WSProfileSeeder::class,

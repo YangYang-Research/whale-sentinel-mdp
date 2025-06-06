@@ -13,7 +13,7 @@ class WSAgentSeeder extends Seeder
      */
     public function run(): void
     {
-        $instanceId = DB::table('ws_instances')->value('id');
+        $applicationId = DB::table('ws_applications')->value('id');
 
         $profile = [
             'profile' => [
@@ -69,7 +69,7 @@ class WSAgentSeeder extends Seeder
                 'description' => 'Whale Sentinel Agent 1',
                 'type' => 'python-flask-agent',
                 'profile' => json_encode($profile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
-                'instance_id' => $instanceId,
+                'application_id' => $applicationId,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
