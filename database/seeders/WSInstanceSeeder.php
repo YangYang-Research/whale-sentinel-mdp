@@ -15,8 +15,8 @@ class WSInstanceSeeder extends Seeder
     {
         DB::table('ws_instances')->insert([
             [
-                'name' => 'Whale Sentinel Instance',
-                'description' => 'Example instance for Whale Sentinel',
+                'name' => 'WS Services - Instance',
+                'description' => 'Instance for Whale Sentinel Services',
                 'status' => 'active',
                 'created_at' => now(),
                 'updated_at' => now(),

@@ -8,6 +8,7 @@ use App\Http\Controllers\Dashboard\InstanceController;
 use App\Http\Controllers\Dashboard\ApplicationController;
 use App\Http\Controllers\Dashboard\AgentController;
 use App\Http\Controllers\Dashboard\ServiceController;
+use App\Http\Controllers\Dashboard\ProfileController;
 
 Route::get('/', function () {
         return view('welcome');
@@ -33,6 +34,8 @@ Route::group(['prefix' => 'whale-sentinel'], function() {
             Route::resource('agent', AgentController::class);
 
             Route::resource('service', ServiceController::class);
+
+            Route::resource('profile', ProfileController::class);
         });
         
         Route::post('/logout', [LoginController::class, 'postLogout'])->name('submiter.logout');

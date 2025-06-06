@@ -17,8 +17,8 @@ class WSApplicationSeeder extends Seeder
 
         DB::table('ws_applications')->insert([
             [
-                'name' => 'Web App Demo',
-                'description' => 'Example web application demo for Whale Sentinel',
+                'name' => 'DGA Detection',
+                'description' => 'WS Service',
                 'language' => 'python',
                 'status' => 'active',
                 'instance_id' => $instanceId,

@@ -22,22 +22,24 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Instance Name</th>
-                        <th>Agent Name</th>
-                        <th>IP</th>
+                        <th>App Name</th>
                         <th>Language</th>
-                        <th>Updated At</th>
+                        <th>Agent Name</th>
+                        <th>Type</th>
+                        <th>IP</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th>ID</th>
-                        <th>Instance Name</th>
-                        <th>Agent Name</th>
-                        <th>IP</th>
+                        <th>App Name</th>
                         <th>Language</th>
-                        <th>Updated At</th>
+                        <th>Agent Name</th>
+                        <th>Type</th>
+                        <th>IP</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>
@@ -45,18 +47,58 @@
                     @foreach($agents as $agent)
                     <tr>
                         <td>{{ $agent->id }}</td>
-                        <td>{{ $agent->instance->name }}</td>
+                        <td>{{ $agent->application->name }}</td>
+                        <td>
+                            @php
+                                $lang = $languages[$agent->application->language] ?? null;
+                            @endphp
+
+                            @if($lang)
+                                <img src="{{ asset($lang['icon']) }}" alt="{{ $lang['label'] }}" width="24" height="24" class="me-1">
+                                <span>{{ $lang['label'] }}</span>
+                            @else
+                                {{ $agent->application->language }}
+                            @endif
+                        </td>
                         <td>{{ $agent->name }}</td>
+                        <td>
+                            @php
+                                $langKey = $agent->application->language;
+                                $lang = $languages[$langKey] ?? null;
+                                $agentType = $agent->type;
+                                $agentInfo = null;
+
+                                if ($lang && isset($lang['agents'])) {
+                                    foreach ($lang['agents'] as $ag) {
+                                        if ($ag['name'] === $agentType) {
+                                            $agentInfo = $ag;
+                                            break;
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            @if($agentInfo)
+                                <img src="{{ asset($agentInfo['icon']) }}" alt="{{ $agentInfo['name'] }}" width="24" height="24" class="me-1">
+                                <span>{{ $agentInfo['name'] }}</span>
+                            @else
+                                {{ $agentType }}
+                            @endif
+                        </td>
                         <td>{{ $agent->ipaddress }}</td>
-                        <td>{{ $agent->language }}</td>
-                        <td>{{ $agent->updated_at }}</td>
+                        <td>@if($agent->status == 'connected')
+                                Connected
+                            @else
+                                Disconnect
+                            @endif
+                        </td>
                         <td>
                             <a href="#" class="btn btn-info btn-icon-split">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-info-circle"></i>
                                 </span>
                             </a>
-                            <a href="#" class="btn btn-primary btn-icon-split">
+                            <a href="{{ route('agent.edit', ['agent' => $agent]) }}" class="btn btn-primary btn-icon-split">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-pen-square"></i>
                                 </span>

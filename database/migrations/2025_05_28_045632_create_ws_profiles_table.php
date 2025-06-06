@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name', 255);
             $table->text('description')->nullable();
+            $table->string('type', 255);
             $table->text('profile');
+            $table->string('status')->default('active');
+            
             $table->timestamps();
         });
     }

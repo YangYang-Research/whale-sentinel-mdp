@@ -80,6 +80,7 @@ class WSProfileSeeder extends Seeder
             [
                 'name' => 'Agent-Profile-Example',
                 'description' => 'This is an example profile for agents.',
+                'type' => 'agent',
                 'profile' => json_encode($agentProfile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -87,6 +88,7 @@ class WSProfileSeeder extends Seeder
             [
                 'name' => 'Service-Profile-Example',
                 'description' => 'This is an example profile for ws-common-attack-detection service.',
+                'type' => 'service',
                 'profile' => json_encode($serviceProfile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
                 'created_at' => now(),
                 'updated_at' => now(),

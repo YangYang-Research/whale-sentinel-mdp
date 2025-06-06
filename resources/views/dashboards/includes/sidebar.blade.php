@@ -51,6 +51,12 @@
             <span>Service</span></a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('profile.index') }}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Template Profile</span></a>
+    </li>
+
     <!-- Nav Item - Utilities Collapse Menu -->
     
 

@@ -30,11 +30,11 @@
             </div>
             <div class="form-group">
                 <label for="name">App Name</label>
-                <input type="text" id="name" name="name" class="form-control">
+                <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <input type="text" id="description" name="description" class="form-control">
+                <input type="text" id="description" name="description" class="form-control" value="{{ old('description') }}" required>
             </div>
             <div class="form-group">
                 <label>Application Language</label>
@@ -53,6 +53,7 @@
             <div class="form-group">
                 <label for="status">Select Status</label>
                 <select class="form-control" id="status" name="status">
+                    <option value="">-- Select Status --</option>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                 </select>

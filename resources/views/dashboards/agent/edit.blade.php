@@ -13,22 +13,22 @@
 @endpush
 @section('dashboard')
 <!-- Page Heading -->
-<h1 class="h3 mb-4 text-gray-800">Create Agent</h1>
+<h1 class="h3 mb-4 text-gray-800">Update Agent</h1>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Create New Agent</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Update Your Agent</h6>
     </div>
     <div class="card-body">
-        <form action="{{ route('agent.store') }}" method="post">
+        <form action="{{ route('agent.update', ['agent' => $agent]) }}" method="post">
             @csrf
-            @method('POST')
+            @method('PUT')
             <div class="form-group">
                 <label for="application">Application</label>
                 <select class="form-control" id="application" name="application_id">
                     <option value="">-- Select Application --</option>
                     @foreach($applications as $application)
-                        <option value="{{ $application->id }}" data-language="{{ $application->language }}">
+                        <option value="{{ $application->id }}" {{ $application->id == $agent->application_id ? 'selected' : '' }} data-language="{{ $application->language }}">
                             {{ $application->name }}
                         </option>
                     @endforeach
@@ -50,13 +50,16 @@
             </div>
 
             <div class="form-group">
+                @php
+                    $displayName = old('name', \Illuminate\Support\Str::after($agent->name, 'ws_agent_'));
+                @endphp
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
+                <input type="text" id="name" name="name" class="form-control" value="{{ $displayName }}" required>
             </div>
 
             <div class="form-group">
                 <label for="description">Description</label>
-                <input type="text" id="description" name="description" class="form-control" value="{{ old('description') }}" required>
+                <input type="text" id="description" name="description" class="form-control" value="{{ old('description', $agent->description) }}" required>
             </div>
 
             <div class="form-group">
@@ -79,7 +82,7 @@
                         Beautify JSON
                     </button>
                 </div>   
-                <textarea rows="10" cols="50" id="profile" name="profile" class="form-control" required>{{ old('profile', '{}') }}</textarea>
+                <textarea rows="10" cols="50" id="profile" name="profile" class="form-control" required>{{ old('profile', $agent->profile) }}</textarea>
                 <small id="json-error" class="text-danger d-none">⚠️ Invalid JSON format</small>
             </div>
 
@@ -94,6 +97,96 @@
 @endsection
 @push('script')
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const languageConfig = @json($languages);
+        const applicationSelect = document.getElementById("application");
+        const langInfo = document.getElementById("language-info");
+        const langImg = document.getElementById("lang-img");
+        const langLabel = document.getElementById("lang-label");
+
+        const agentList = document.getElementById("agent-list");
+        const agentButtons = document.getElementById("agent-buttons");
+        const selectedAgentInput = document.getElementById("selected-agent");
+
+        const currentApplication = applicationSelect.value;
+        const currentAgentType = "{{ $agent->type }}";
+
+        function renderLanguageAndAgents(languageKey) {
+            if (!languageConfig[languageKey]) {
+                langInfo.style.display = "none";
+                agentList.style.display = "none";
+                return;
+            }
+
+            const lang = languageConfig[languageKey];
+            langInfo.style.display = "block";
+            langImg.src = '/' + lang.icon;
+            langImg.alt = languageKey;
+            langLabel.textContent = lang.label;
+
+            // render supported agents
+            agentButtons.innerHTML = '';
+            if (lang.agents && Array.isArray(lang.agents)) {
+                lang.agents.forEach(agent => {
+                    const btn = document.createElement('button');
+                    btn.type = "button";
+                    btn.className = "btn btn-outline-secondary d-flex align-items-center agent-btn p-2";
+                    btn.dataset.value = agent.name;
+
+                    const icon = document.createElement('img');
+                    icon.src = '/' + agent.icon;
+                    icon.width = 24;
+                    icon.height = 24;
+
+                    const text = document.createElement('span');
+                    text.className = "ms-2";
+                    text.textContent = agent.name;
+
+                    btn.appendChild(icon);
+                    btn.appendChild(text);
+
+                    // mark selected agent
+                    if (agent.name === currentAgentType) {
+                        btn.classList.remove('btn-outline-secondary');
+                        btn.classList.add('btn-primary', 'text-white');
+                        selectedAgentInput.value = agent.name;
+                    }
+
+                    btn.addEventListener("click", function () {
+                        document.querySelectorAll(".agent-btn").forEach(b => {
+                            b.classList.remove("btn-primary", "text-white");
+                            b.classList.add("btn-outline-secondary");
+                        });
+                        this.classList.add("btn-primary", "text-white");
+                        this.classList.remove("btn-outline-secondary");
+                        selectedAgentInput.value = this.dataset.value;
+                    });
+
+                    agentButtons.appendChild(btn);
+                });
+                agentList.style.display = "block";
+            } else {
+                agentList.style.display = "none";
+            }
+        }
+
+        // Initial render if currentApplication exists
+        if (currentApplication) {
+            const selectedOption = applicationSelect.querySelector(`option[value="${currentApplication}"]`);
+            const languageKey = selectedOption ? selectedOption.dataset.language : null;
+            if (languageKey) renderLanguageAndAgents(languageKey);
+        }
+
+        applicationSelect.addEventListener("change", function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const languageKey = selectedOption.getAttribute("data-language");
+            renderLanguageAndAgents(languageKey);
+            selectedAgentInput.value = ''; // reset agent type
+        });
+    });
+</script>
+
+<!-- <script>
     document.addEventListener("DOMContentLoaded", function () {
         const applicationSelect = document.getElementById("application");
         const languageInfo = document.getElementById("language-info");
@@ -167,7 +260,7 @@
             });
         });
     });
-</script>
+</script> -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const textarea = document.getElementById("profile");

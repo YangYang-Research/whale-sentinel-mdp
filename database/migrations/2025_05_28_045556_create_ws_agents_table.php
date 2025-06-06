@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('ipaddress')->nullable();
             $table->string('type', 255);
+            $table->string('status')->default('disconnect');
             $table->text('profile');
             
             $table->unsignedBigInteger('application_id')->unique();

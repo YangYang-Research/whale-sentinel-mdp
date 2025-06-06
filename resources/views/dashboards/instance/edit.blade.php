@@ -13,15 +13,16 @@
             @method('PUT')
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ $instance->name }}">
+                <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $instance->name) }}" required>
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <input type="text" id="description" name="description" class="form-control" value="{{ $instance->description }}">
+                <input type="text" id="description" name="description" class="form-control" value="{{ old('description', $instance->description) }}" required>
             </div>
             <div class="form-group">
                 <label for="status">Select Status</label>
                 <select class="form-control" id="status" name="status">
+                    <option value="">-- Select Status --</option>
                     <option value="active" {{ $instance->status == 'active' ? 'selected' : '' }}>Active</option>
                     <option value="inactive" {{ $instance->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
                 </select>

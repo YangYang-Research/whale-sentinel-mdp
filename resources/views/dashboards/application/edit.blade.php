@@ -33,11 +33,11 @@
             </div>
             <div class="form-group">
                 <label for="name">App Name</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $application->name) }}">
+                <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $application->name) }}" required>
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <input type="text" id="description" name="description" class="form-control" value="{{ old('description', $application->description) }}">
+                <input type="text" id="description" name="description" class="form-control" value="{{ old('description', $application->description) }}" required>
             </div>
             <div class="form-group">
                 <label>Application Language</label>
@@ -56,8 +56,9 @@
             <div class="form-group">
                 <label for="status">Select Status</label>
                 <select class="form-control" id="status" name="status">
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
+                    <option value="">-- Select Status --</option>
+                    <option value="active" {{ $application->status == 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive" {{ $application->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
                 </select>
             </div>
             <div class="form-group">
