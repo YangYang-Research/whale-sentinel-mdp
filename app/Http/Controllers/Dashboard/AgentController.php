@@ -172,7 +172,7 @@ class AgentController extends Controller
         $envContent = <<<ENV
             WS_AGENT_NAME="{$agent->name}"
 
-            WS_AGENT_AGENT_ID="{$agent->agent_id}"
+            WS_AGENT_ID="{$agent->agent_id}"
 
             LOG_MAX_SIZE=1000000
 
