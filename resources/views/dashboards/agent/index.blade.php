@@ -2,19 +2,34 @@
 @push('css')
 <!-- Custom styles for this page -->
 <link href="{{ asset ('assets/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<style>
+    .download-agent {
+
+    }
+</style>
 @endpush
 @section('dashboard')
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Agent</h1>
     <a href="{{ route('agent.create') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-            class="fas fa-plus fa-sm text-white-50"></i> Create New Agent</a>
+            class="fas fa-plus fa-sm text-white-50"></i> Create New Agent Profile</a>
 </div>
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">All Your Agent</h6>
+        <div class="d-sm-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">All Your Agent</h6>
+            <h6 class="m-0 font-weight-bold text-primary download-agent">
+                <a href="https://github.com/YangYang-Research/whale-sentinel-agents" target="_blank" class="btn btn-primary btn-icon-split btn-sm">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-arrow-down"></i>
+                    </span>
+                    <span class="text">Download The Latest Agent</span>
+                </a>
+            </h6>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -93,7 +108,7 @@
                             @endif
                         </td>
                         <td>
-                            <a href="#" class="btn btn-info btn-icon-split">
+                            <a href="{{ route('agent.show', ['agent' => $agent]) }}" class="btn btn-info btn-icon-split">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-info-circle"></i>
                                 </span>

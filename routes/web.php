@@ -32,7 +32,9 @@ Route::group(['prefix' => 'whale-sentinel'], function() {
             Route::resource('application', ApplicationController::class);
 
             Route::resource('agent', AgentController::class);
-
+            
+            Route::post('agent/export/env', [AgentController::class, 'exportEnv'])->name('agent.export.env');
+            
             Route::resource('service', ServiceController::class);
 
             Route::resource('profile', ProfileController::class);

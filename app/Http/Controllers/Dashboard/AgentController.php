@@ -70,12 +70,12 @@ class AgentController extends Controller
                 ->withErrors(['profile' => 'Profile must be a valid JSON string.']);
         }
 
-        $rawKey = $request->name . '_' . Str::random(12) . now()->timestamp;
+        $rawAgentId = $request->name . '_' . Str::random(12) . now()->timestamp;
 
         $agent = new WSAgent;
         $agent->application_id = $request->application_id;
         $agent->name = 'ws_agent_'.$request->name;
-        $agent->key = hash('sha256', $rawKey);
+        $agent->agent_id = hash('sha256', $rawAgentId);
         $agent->description = $request->description;
         $agent->type = $request->agent_type;
         $agent->profile = $request->profile;
@@ -88,7 +88,18 @@ class AgentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $agent = WSAgent::find($id);
+
+        $applications = WSApplication::all();
+        
+        $languages = config('languages');
+
+
+        return view('dashboards.agent.show', [
+            'agent' => $agent,
+            'applications' => $applications,
+            'languages' => $languages,
+        ]);
     }
 
     /**
@@ -133,12 +144,10 @@ class AgentController extends Controller
                 ->withErrors(['profile' => 'Profile must be a valid JSON string.']);
         }
 
-        $rawKey = $request->name . '_' . Str::random(12) . now()->timestamp;
 
         $agent = WSAgent::find($id);
         $agent->application_id = $request->application_id;
         $agent->name = 'ws_agent_'.$request->name;
-        $agent->key = hash('sha256', $rawKey);
         $agent->description = $request->description;
         $agent->type = $request->agent_type;
         $agent->profile = $request->profile;
@@ -152,5 +161,33 @@ class AgentController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function exportEnv(Request $request)
+    {
+        $id = $request->id;
+        
+        $agent = WSAgent::find($id);
+
+        $envContent = <<<ENV
+            WS_AGENT_NAME="{$agent->name}"
+
+            WS_AGENT_AGENT_ID="{$agent->agent_id}"
+
+            LOG_MAX_SIZE=1000000
+
+            LOG_MAX_BACKUP=3
+
+            WS_GATEWAY_API="your_whale_sentinel_gateway_api"
+
+            WS_AGENT_AUTH_TOKEN="your_agent_authentication_token"
+            ENV;
+        
+        $fileName = $agent->name.'.env';
+
+        return response($envContent, 200, [
+            'Content-Type' => 'text/plain',
+            'Content-Disposition' => "attachment; filename=\"$fileName\"",
+        ]);
     }
 }

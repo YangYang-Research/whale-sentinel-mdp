@@ -13,11 +13,11 @@
 @endpush
 @section('dashboard')
 <!-- Page Heading -->
-<h1 class="h3 mb-4 text-gray-800">Update Agent</h1>
+<h1 class="h3 mb-4 text-gray-800">Update Agent Profile</h1>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Update Your Agent</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Update Your Agent Profile</h6>
     </div>
     <div class="card-body">
         <form action="{{ route('agent.update', ['agent' => $agent]) }}" method="post">
@@ -54,6 +54,8 @@
                     $displayName = old('name', \Illuminate\Support\Str::after($agent->name, 'ws_agent_'));
                 @endphp
                 <label for="name">Name</label>
+                </br>
+                <small class="text-muted">Prefix ws_agent_*</small>
                 <input type="text" id="name" name="name" class="form-control" value="{{ $displayName }}" required>
             </div>
 
@@ -63,9 +65,9 @@
             </div>
 
             <div class="form-group">
-                <label for="agent_profile">Agent Profile</label>
+                <label for="agent_profile">Template Agent Profile</label>
                 <select class="form-control" id="agent_profile" name="agent_profile">
-                    <option value="">-- Select Profile --</option>
+                    <option value="">-- Select Template Profile --</option>
                     @foreach($profiles as $profile)
                         <option value="{{ $profile->id }}" data-profile="{{ ($profile->profile) }}">
                             {{ $profile->name }}
@@ -75,7 +77,7 @@
             </div>
 
             <div class="form-group">
-                <label for="profile">Profile Detail</label>
+                <label for="profile">Agent Profile Detail</label>
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <small class="text-muted">Paste valid JSON and click "Beautify" to format it.</small>
                     <button type="button" class="btn btn-sm btn-outline-secondary" id="beautify-json">
@@ -185,82 +187,6 @@
         });
     });
 </script>
-
-<!-- <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const applicationSelect = document.getElementById("application");
-        const languageInfo = document.getElementById("language-info");
-        const langImg = document.getElementById("lang-img");
-        const langLabel = document.getElementById("lang-label");
-        const agentList = document.getElementById("agent-list");
-        const agentButtons = document.getElementById("agent-buttons");
-        const selectedAgentInput = document.getElementById("selected-agent");
-
-        // Config từ PHP truyền sang JS
-        const languages = @json(config('languages'));
-
-        // Khi chọn Application
-        applicationSelect.addEventListener("change", function () {
-            const selectedOption = this.options[this.selectedIndex];
-            const langKey = selectedOption.getAttribute("data-language");
-
-            if (!langKey || !languages[langKey]) {
-                languageInfo.style.display = "none";
-                agentList.style.display = "none";
-                agentButtons.innerHTML = '';
-                selectedAgentInput.value = '';
-                return;
-            }
-
-            const langData = languages[langKey];
-
-            // Hiển thị icon + label ngôn ngữ
-            languageInfo.style.display = "block";
-            langImg.src = `{{ asset('') }}` + langData.icon;
-            langImg.alt = langKey;
-            langLabel.textContent = langData.label;
-
-            // Hiển thị các agent tương ứng
-            agentButtons.innerHTML = '';
-            selectedAgentInput.value = '';
-            agentList.style.display = "block";
-
-            langData.agents.forEach(agent => {
-                const button = document.createElement("button");
-                button.type = "button";
-                button.className = "btn btn-outline-secondary me-2 d-flex align-items-center agent-btn";
-                button.setAttribute("data-agent", agent.name);
-
-                const img = document.createElement("img");
-                img.src = `{{ asset('') }}` + agent.icon;
-                img.alt = agent.name;
-                img.width = 24;
-                img.height = 24;
-
-                const span = document.createElement("span");
-                span.className = "ms-2";
-                span.textContent = agent.name;
-
-                button.appendChild(img);
-                button.appendChild(span);
-                agentButtons.appendChild(button);
-
-                // Gán sự kiện click
-                button.addEventListener("click", function () {
-                    document.querySelectorAll(".agent-btn").forEach(btn => {
-                        btn.classList.remove("btn-primary", "text-white");
-                        btn.classList.add("btn-outline-secondary");
-                    });
-
-                    this.classList.remove("btn-outline-secondary");
-                    this.classList.add("btn-primary", "text-white");
-
-                    selectedAgentInput.value = this.getAttribute("data-agent");
-                });
-            });
-        });
-    });
-</script> -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const textarea = document.getElementById("profile");

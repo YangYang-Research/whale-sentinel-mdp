@@ -14,7 +14,7 @@ class WSAgent extends Model
 
     protected $fillable = [
         'name',
-        'key',
+        'agent_id',
         'description',
         'profile',
         'instance_id',

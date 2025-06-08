@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ws_agents', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255)->unique();
-            $table->string('key', 255);
+            $table->string('agent_id', 255)->unique();
             $table->text('description')->nullable();
             $table->string('ipaddress')->nullable();
             $table->string('type', 255);

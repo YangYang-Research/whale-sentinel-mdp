@@ -13,11 +13,11 @@
 @endpush
 @section('dashboard')
 <!-- Page Heading -->
-<h1 class="h3 mb-4 text-gray-800">Create Agent</h1>
+<h1 class="h3 mb-4 text-gray-800">Create Agent Profile</h1>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Create New Agent</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Create New Agent Profile</h6>
     </div>
     <div class="card-body">
         <form action="{{ route('agent.store') }}" method="post">
@@ -51,6 +51,8 @@
 
             <div class="form-group">
                 <label for="name">Name</label>
+                </br>
+                <small class="text-muted">Prefix ws_agent_*</small>
                 <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
             </div>
 
@@ -60,9 +62,9 @@
             </div>
 
             <div class="form-group">
-                <label for="agent_profile">Agent Profile</label>
+                <label for="agent_profile">Template Agent Profile</label>
                 <select class="form-control" id="agent_profile" name="agent_profile">
-                    <option value="">-- Select Profile --</option>
+                    <option value="">-- Select Template Profile --</option>
                     @foreach($profiles as $profile)
                         <option value="{{ $profile->id }}" data-profile="{{ ($profile->profile) }}">
                             {{ $profile->name }}
@@ -72,7 +74,7 @@
             </div>
 
             <div class="form-group">
-                <label for="profile">Profile Detail</label>
+                <label for="profile">Agent Profile Detail</label>
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <small class="text-muted">Paste valid JSON and click "Beautify" to format it.</small>
                     <button type="button" class="btn btn-sm btn-outline-secondary" id="beautify-json">
