@@ -20,7 +20,8 @@ class ProfileController extends Controller
             $validator = Validator::make($request->all(),[
                 'event_info' => 'required|string',
                 'payload.data.type' => ['required', Rule::in(['agent', 'service'])],
-                'payload.data.key'  => 'required|string|max:255',
+                'payload.data.name'  => 'required|string|max:255',
+                'payload.data.id'  => 'required|string|max:255',
                 'request_created_at' => [
                     'required',
                     'date_format:Y-m-d\TH:i:s\Z',
@@ -35,20 +36,21 @@ class ProfileController extends Controller
                 ]);
             }
 
-            if ($request['payload']['data']['type'] === 'agent' && !preg_match('/^ws_agent_.*/', $request['payload']['data']['key'])) {
+            if ($request['payload']['data']['type'] === 'agent' && !preg_match('/^ws_agent_.*/', $request['payload']['data']['name'])) {
                 return response()->json([
                     'status' => 'Error',
-                    'message' => 'The key must start with "ws_agent_" for type "agent".'
+                    'message' => 'The name must start with "ws_agent_" for type "agent".'
                 ], 422);
             }
 
             $eventInfo = $request['event_info'];
             $type = $request['payload']['data']['type'];
-            $key = $request['payload']['data']['key'];
+            $name = $request['payload']['data']['name'];
+            $id = $request['payload']['data']['id'];
             $requestCreatedAt = $request['request_created_at'];
             
             if ($type === 'agent') {
-                $agent = WsAgent::where('name', $key)->first();
+                $agent = WsAgent::where('name', $name)->where('agent_id', $id)->first();
                 if (!$agent) {
                     return response()->json([
                         'status' => 'Error',
@@ -62,6 +64,7 @@ class ProfileController extends Controller
                     'data'  => [
                         'type'    => 'agent',
                         'name'    => $agent->name,
+                        'id'      => $agent->agent_id,
                         'profile' => $agent->profile,
                     ],
                     'event_info' => '',
@@ -71,7 +74,7 @@ class ProfileController extends Controller
             }
 
             if ($type === 'service') {
-                $service = WsService::where('name', $key)->first();
+                $service = WsService::where('name', $name)->first();
                 if (!$service) {
                     return response()->json([
                         'status' => 'Error',
@@ -109,7 +112,8 @@ class ProfileController extends Controller
             $validator = Validator::make($request->all(),[
                 'event_info' => 'required|string',
                 'payload.data.type' => ['required', Rule::in(['agent', 'service'])],
-                'payload.data.key'  => 'required|string|max:255',
+                'payload.data.name'  => 'required|string|max:255',
+                'payload.data.id'  => 'required|string|max:255',
                 'payload.data.profile' => 'required|array',
                 'request_created_at' => [
                     'required',
@@ -125,16 +129,17 @@ class ProfileController extends Controller
                 ]);
             }
 
-            if ($request['payload']['data']['type'] === 'agent' && !preg_match('/^ws_agent_.*/', $request['payload']['data']['key'])) {
+            if ($request['payload']['data']['type'] === 'agent' && !preg_match('/^ws_agent_.*/', $request['payload']['data']['name'])) {
                 return response()->json([
                     'status' => 'Error',
-                    'message' => 'The key must start with "ws_agent_" for type "agent".'
+                    'message' => 'The name must start with "ws_agent_" for type "agent".'
                 ], 422);
             }
 
             $eventInfo = $request['event_info'];
             $type = $request['payload']['data']['type'];
-            $key = $request['payload']['data']['key'];
+            $name = $request['payload']['data']['name'];
+            $id = $request['payload']['data']['id'];
             $requestCreatedAt = $request['request_created_at'];
             $newProfileData = $request['payload']['data']['profile'];
 
@@ -147,7 +152,7 @@ class ProfileController extends Controller
             }
 
             if ($type === 'agent') {
-                $agent = WsAgent::where('name', $key)->first();
+                $agent = WsAgent::where('name', $name)->where('agent_id', $id)->first();
                 if (!$agent) {
                     return response()->json([
                         'status' => 'Error',
@@ -178,6 +183,7 @@ class ProfileController extends Controller
                     'data'  => [
                         'type'    => 'agent',
                         'name'    => $agent->name,
+                        'id'      => $agent->agent_id,
                         'profile' => $agent->profile,
                     ],
                     'event_info' => '',
@@ -187,7 +193,7 @@ class ProfileController extends Controller
             }
 
             if ($type === 'service') {
-                $service = WsService::where('name', $key)->first();
+                $service = WsService::where('name', $name)->first();
                 if (!$service) {
                     return response()->json([
                         'status' => 'Error',
