@@ -10,80 +10,65 @@
 <!-- Content Row -->
 <div class="row">
 
-    <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Earnings (Monthly)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                            Instance</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $instances->count() }}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        <i class="fas fa-server fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Earnings (Annual)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                            Application</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $applications->count() }}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        <i class="fas fa-splotch fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Agent
                         </div>
-                        <div class="row no-gutters align-items-center">
-                            <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                            </div>
-                            <div class="col">
-                                <div class="progress progress-sm mr-2">
-                                    <div class="progress-bar bg-info" role="progressbar"
-                                        style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                        aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $agents->count() }}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        <i class="fas fa-shield-virus fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Pending Requests Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-warning shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Pending Requests</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                            TBD</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -135,7 +120,7 @@
             <!-- Card Header - Dropdown -->
             <div
                 class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                <h6 class="m-0 font-weight-bold text-primary">App Language</h6>
                 <div class="dropdown no-arrow">
                     <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -154,19 +139,10 @@
             <!-- Card Body -->
             <div class="card-body">
                 <div class="chart-pie pt-4 pb-2">
-                    <canvas id="myPieChart"></canvas>
+                    <canvas id="languageAreaChart"></canvas>
                 </div>
-                <div class="mt-4 text-center small">
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-primary"></i> Direct
-                    </span>
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> Social
-                    </span>
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-info"></i> Referral
-                    </span>
-                </div>
+
+                <div class="mt-4 text-center small" id="language-legend"></div>
             </div>
         </div>
     </div>
@@ -332,4 +308,55 @@
 <!-- Page level custom scripts -->
 <script src="{{ asset ('assets/js/demo/chart-area-demo.js') }}"></script>
 <script src="{{ asset ('assets/js/demo/chart-pie-demo.js') }}"></script>
+<script>
+    const languageLabels = {!! json_encode($languageCounts->keys()) !!};
+    const languageData = {!! json_encode($languageCounts->values()) !!};
+
+    // Tự định nghĩa màu sắc và lớp CSS tương ứng ở client
+    const colorPalette = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'];
+    const legendClasses = ['text-primary', 'text-success', 'text-info', 'text-warning', 'text-danger', 'text-secondary'];
+
+    const languageColors = languageLabels.map((_, index) => colorPalette[index % colorPalette.length]);
+    const legendCssClasses = languageLabels.map((_, index) => legendClasses[index % legendClasses.length]);
+
+    // Vẽ biểu đồ
+    const ctx_langChart = document.getElementById("languageAreaChart");
+    new Chart(ctx_langChart, {
+        type: 'doughnut',
+        data: {
+            labels: languageLabels,
+            datasets: [{
+                data: languageData,
+                backgroundColor: languageColors,
+                hoverBackgroundColor: languageColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: true,
+                caretPadding: 10,
+            },
+            legend: {
+                display: false
+            },
+            cutoutPercentage: 70,
+        },
+    });
+
+    // Render custom legend
+    const legendContainer = document.getElementById("language-legend");
+    legendContainer.innerHTML = languageLabels.map((label, index) => {
+        return `<span class="mr-2">
+            <i class="fas fa-circle ${legendCssClasses[index]}"></i> ${label}
+        </span>`;
+    }).join('');
+</script>
 @endpush

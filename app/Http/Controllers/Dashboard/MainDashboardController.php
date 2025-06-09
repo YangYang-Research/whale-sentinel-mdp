@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\WSInstance;
+use App\Models\WSAgent;
+use App\Models\WSApplication;
 
 class MainDashboardController extends Controller
 {
@@ -12,7 +15,23 @@ class MainDashboardController extends Controller
      */
     public function index()
     {
-        return view ("dashboards.index");
+        $instances = WSInstance::all();
+
+        $applications = WSApplication::all();
+
+        $agents = WSAgent::all();
+
+        $languageCounts = $applications->groupBy('language')->map->count();
+
+        $languages = config('languages');
+
+        return view ("dashboards.index",[
+            'instances' => $instances,
+            'applications' => $applications,
+            'agents' => $agents,
+            'languageCounts' => $languageCounts,
+            'languages' => $languages,
+        ]);
     }
 
     /**
