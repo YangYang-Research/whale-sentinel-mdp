@@ -1,0 +1,28 @@
+<p>Common Attack Detection</p>
+<div class="form-group form-check">
+    <input type="checkbox" class="form-check-input" id="ws_module_common_attack_detection_enable" checked>
+    <label class="form-check-label">Enable Common Attack Detection</label>
+</div>
+
+<div class="ml-3">
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="detect_cross_site_scripting" checked>
+        <label class="form-check-label">Detect Cross-Site Scripting</label>
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="detect_http_large_request" checked>
+        <label class="form-check-label">Detect HTTP Large Request</label>
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="detect_sql_injection" checked>
+        <label class="form-check-label">Detect SQL Injection</label>
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="detect_http_verb_tampering" checked>
+        <label class="form-check-label">Detect HTTP Verb Tampering</label>
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="detect_unknow_attack" checked>
+        <label class="form-check-label">Detect Unknow Attack</label>
+    </div>
+</div>

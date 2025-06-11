@@ -47,6 +47,10 @@ return [
                 'name' => 'NodeAgent',
                 'icon' => 'assets/icons/agents/javascript-node.svg',
             ],
+            [
+                'name' => 'NextAgent',
+                'icon' => 'assets/icons/agents/javascript-next.svg',
+            ],
         ],
     ],
     'php' => [
@@ -56,6 +60,10 @@ return [
             [
                 'name' => 'LaravelAgent',
                 'icon' => 'assets/icons/agents/php-laravel.svg',
+            ],
+            [
+                'name' => 'CakeAgent',
+                'icon' => 'assets/icons/agents/php-cake.svg',
             ],
         ],
     ],

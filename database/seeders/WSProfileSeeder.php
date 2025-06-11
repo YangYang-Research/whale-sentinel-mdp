@@ -14,7 +14,7 @@ class WSProfileSeeder extends Seeder
                 'running_mode' => 'monitor',
                 'last_run_mode' => 'lite',
                 'lite_mode_data_is_synchronized' => false,
-                'lite_mode_data_synchronize_status' => 'fail',
+                'lite_mode_data_synchronize_status' => 'failure',
                 'ws_module_web_attack_detection' => [
                     'enable' => true,
                     'detect_header' => false,
@@ -30,6 +30,7 @@ class WSProfileSeeder extends Seeder
                     'detect_http_large_request' => true,
                     'detect_sql_injection' => true,
                     'detect_http_verb_tampering' => true,
+                    'detect_unknow_attack' => true
                 ],
                 'secure_response_headers' => [
                     'enable' => true,

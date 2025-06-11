@@ -55,6 +55,7 @@ class AgentController extends Controller
     public function store(Request $request, WSAgent $agent)
     {
         $validated = $request->validate([
+            'application_id' => 'required|integer',
             'name'    => 'required|max:255',
             'description' => 'required|max:255',
             'agent_type' => 'required|in:FlaskAgent,DjangoAgent,FastAPIAgent,SpringAgent,GinAgent,NodeAgent,LaravelAgent,RailsAgent',
@@ -74,7 +75,7 @@ class AgentController extends Controller
 
         $agent = new WSAgent;
         $agent->application_id = $request->application_id;
-        $agent->name = 'ws_agent_'.$request->name;
+        $agent->name = 'ws_agent_'.preg_replace('/\s+/', '', $request->name);;
         $agent->agent_id = hash('sha256', $rawAgentId);
         $agent->description = $request->description;
         $agent->type = $request->agent_type;
@@ -114,7 +115,7 @@ class AgentController extends Controller
         $languages = config('languages');
 
         $profiles = WSProfile::where('type', 'agent')->get();
-
+        
         return view('dashboards.agent.edit', [
             'agent' => $agent,
             'applications' => $applications,
@@ -129,6 +130,7 @@ class AgentController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
+            'application_id' => 'required|integer',
             'name'    => 'required|max:255',
             'description' => 'required|max:255',
             'agent_type' => 'required|in:FlaskAgent,DjangoAgent,FastAPIAgent,SpringAgent,GinAgent,NodeAgent,LaravelAgent,RailsAgent',
@@ -147,7 +149,7 @@ class AgentController extends Controller
 
         $agent = WSAgent::find($id);
         $agent->application_id = $request->application_id;
-        $agent->name = 'ws_agent_'.$request->name;
+        $agent->name = 'ws_agent_'.preg_replace('/\s+/', '', $request->name);;
         $agent->description = $request->description;
         $agent->type = $request->agent_type;
         $agent->profile = $request->profile;

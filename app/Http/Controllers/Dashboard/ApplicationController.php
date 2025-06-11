@@ -45,6 +45,7 @@ class ApplicationController extends Controller
     public function store(Request $request, WSApplication $application)
     {
         $validated = $request->validate([
+            'instance_id' => 'required|integer',
             'name'    => 'required|max:255',
             'description' => 'required|max:255',
             'language' => 'required|in:python,java,golang,javascript,php,ruby',
@@ -93,6 +94,7 @@ class ApplicationController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
+            'instance_id' => 'required|integer',
             'name'    => 'required|max:255',
             'description' => 'required|max:255',
             'language' => 'required|in:python,java,golang,javascript,php,ruby',

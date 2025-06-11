@@ -73,6 +73,30 @@
                 </select>
             </div>
 
+            <div class="form-group" id="partial-profile-form">
+                <label>Configure Profile</label>
+                <div class="row">
+                    <div class="col-md-4">
+                        @include('dashboards.partials.profile_form_visualizer.running_mode')
+                    </div>
+                    <div class="col-md-4">
+                        @include('dashboards.partials.profile_form_visualizer.ws_module_web_attack_detection')
+                    </div>
+                    <div class="col-md-4">
+                        @include('dashboards.partials.profile_form_visualizer.ws_module_dga_detection')
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        @include('dashboards.partials.profile_form_visualizer.ws_module_common_attack_detection')
+                    </div>
+                    <div class="col-md-8">
+                        @include('dashboards.partials.profile_form_visualizer.secure_response_headers')
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="profile">Agent Profile Detail</label>
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -172,67 +196,157 @@
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const textarea = document.getElementById("profile");
+    const profileSelect = document.getElementById("agent_profile");
+    const profileTextarea = document.getElementById("profile");
     const errorMsg = document.getElementById("json-error");
 
-    textarea.addEventListener("input", function () {
-        try {
-            JSON.parse(textarea.value);
-            errorMsg.classList.add("d-none");
-            textarea.classList.remove("is-invalid");
-        } catch (e) {
-            errorMsg.classList.remove("d-none");
-            textarea.classList.add("is-invalid");
+    // 🔸 Uncheck all checkboxes on first load
+    document.querySelectorAll("#partial-profile-form input[type='checkbox']").forEach(cb => cb.checked = false);
+
+    function customEncode(str) {
+        return str
+            .replace(/"/g, '&quot;')
+            .replace(/>/g, '&gt;')
+            .replace(/\)/g, '&#41;')
+            .replace(/</g, '&lt;')
+            .replace(/\//g, '&#47;')
+            .replace(/{/g, '&#123;')
+            .replace(/}/g, '&#125;');
+    }
+
+    function populateFormFromProfile(profile) {
+        if (!profile || typeof profile !== "object") return;
+
+        // Running Mode
+        if (profile.running_mode !== undefined) document.getElementById("running_mode").value = profile.running_mode;
+        if (profile.last_run_mode !== undefined) document.getElementById("last_run_mode").value = profile.last_run_mode;
+        if (profile.lite_mode_data_is_synchronized !== undefined) document.getElementById("lite_mode_data_is_synchronized").checked = profile.lite_mode_data_is_synchronized;
+        if (profile.lite_mode_data_synchronize_status !== undefined) document.getElementById("lite_mode_data_synchronize_status").value = profile.lite_mode_data_synchronize_status;
+
+        // Web Attack Detection
+        if (profile.ws_module_web_attack_detection) {
+            const w = profile.ws_module_web_attack_detection;
+            document.getElementById("ws_module_web_attack_detection_enable").checked = w.enable;
+            document.getElementById("ws_module_web_attack_detection_header").checked = w.detect_header;
+            document.getElementById("ws_module_web_attack_detection_threshold").value = w.threshold || 0;
         }
-    });
 
-    const beautifyBtn = document.getElementById("beautify-json");
-    const profileTextarea = document.getElementById("profile");
-
-    beautifyBtn.addEventListener("click", function () {
-        try {
-            const json = JSON.parse(profileTextarea.value);
-            const pretty = JSON.stringify(json, null, 4);
-            profileTextarea.value = pretty;
-        } catch (e) {
-            alert("Invalid JSON format. Please check again.");
+        // DGA Detection
+        if (profile.ws_module_dga_detection) {
+            const d = profile.ws_module_dga_detection;
+            document.getElementById("ws_module_dga_detection_enable").checked = d.enable;
+            document.getElementById("ws_module_dga_detection_threshold").value = d.threshold || 0;
         }
-    });
-});
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const profileSelect = document.getElementById("agent_profile");
-        const profileTextarea = document.getElementById("profile");
 
-        profileSelect.addEventListener("change", function () {
-            const selectedOption = this.options[this.selectedIndex];
-            const profileData = selectedOption.getAttribute("data-profile");
+        // Common Attack Detection
+        if (profile.ws_module_common_attack_detection) {
+            const c = profile.ws_module_common_attack_detection;
+            document.getElementById("ws_module_common_attack_detection_enable").checked = c.enable;
+            document.getElementById("detect_cross_site_scripting").checked = c.detect_cross_site_scripting;
+            document.getElementById("detect_http_large_request").checked = c.detect_http_large_request;
+            document.getElementById("detect_sql_injection").checked = c.detect_sql_injection;
+            document.getElementById("detect_http_verb_tampering").checked = c.detect_http_verb_tampering;
+            document.getElementById("detect_unknow_attack").checked = c.detect_unknow_attack;
+        }
 
-            try {
-                if (profileData) {
-                    const json = JSON.parse(profileData);
-                    const pretty = JSON.stringify(json, null, 4);
-                    profileTextarea.value = pretty;
-                } else {
-                    profileTextarea.value = "{}";
+        // Secure Headers
+        if (profile.secure_response_headers) {
+            const s = profile.secure_response_headers;
+            document.getElementById("secure_response_headers_enable").checked = s.enable;
+
+            // Clear all .secure-header checkboxes
+            document.querySelectorAll(".secure-header").forEach(el => {
+                const key = el.dataset.key;
+                el.checked = s.headers && key in s.headers;
+            });
+
+            // Clear current custom headers
+            const headerList = document.getElementById("custom-header-list");
+            headerList.innerHTML = "";
+
+            // Re-add custom headers
+            for (const key in s.headers) {
+                const isStandard = document.querySelector(`.secure-header[data-key="${key}"]`);
+                if (!isStandard) {
+                    const value = s.headers[key];
+                    const item = document.createElement("li");
+                    const encodedKey = customEncode(key);
+                    const encodedValue = customEncode(value);
+                    item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-header-item");
+                    item.dataset.key = encodedKey;
+                    item.dataset.value = encodedValue;
+                    item.innerHTML = `<span><strong>${encodedKey}</strong>: <code>${encodedValue}</code></span>
+                                      <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
+                    headerList.appendChild(item);
                 }
-            } catch (e) {
-                profileTextarea.value = profileData; // fallback
+            }
+        }
+    }
+
+    profileSelect.addEventListener("change", function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const profileData = selectedOption.getAttribute("data-profile");
+
+        try {
+            if (profileData) {
+                const parsed = JSON.parse(profileData);
+                const profile = parsed.profile || parsed;
+                const pretty = JSON.stringify(parsed, null, 4);
+                profileTextarea.value = pretty;
+                populateFormFromProfile(profile);
+                errorMsg.classList.add("d-none");
+            } else {
+                profileTextarea.value = "{}";
+
+                // 🔸 Uncheck tất cả checkbox
+                document.querySelectorAll("#partial-profile-form input[type='checkbox']").forEach(cb => cb.checked = false);
+
+                const headerList = document.getElementById("custom-header-list");
+                headerList.innerHTML = '';
+
+            }
+
+        } catch (e) {
+            profileTextarea.value = profileData; // fallback if JSON.parse fails
+            errorMsg.classList.remove("d-none");
+        }
+    });
+    
+    // Add custom header
+    const addBtn = document.getElementById("add-custom-header");
+    const keyInput = document.getElementById("custom-header-key");
+    const valueInput = document.getElementById("custom-header-value");
+    const headerList = document.getElementById("custom-header-list");
+
+    if (addBtn && keyInput && valueInput && headerList) {
+        addBtn.addEventListener("click", function () {
+            const key = keyInput.value.trim();
+            const value = valueInput.value.trim();
+
+            if (key && value) {
+                const encodedKey = customEncode(key);
+                const encodedValue = customEncode(value);
+
+                const item = document.createElement("li");
+                item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-header-item");
+                item.dataset.key = encodedKey;
+                item.dataset.value = encodedValue;
+                item.innerHTML = `<span><strong>${encodedKey}</strong>: <code>${encodedValue}</code></span>
+                                  <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
+                headerList.appendChild(item);
+                keyInput.value = '';
+                valueInput.value = '';
+                buildJsonProfile(); // update json
             }
         });
 
-        // Beautify button
-        document.getElementById("beautify-json").addEventListener("click", function () {
-            try {
-                const json = JSON.parse(profileTextarea.value);
-                const pretty = JSON.stringify(json, null, 4);
-                profileTextarea.value = pretty;
-                document.getElementById("json-error").classList.add("d-none");
-            } catch (e) {
-                document.getElementById("json-error").classList.remove("d-none");
+        headerList.addEventListener("click", function (e) {
+            if (e.target.classList.contains("btn-remove")) {
+                e.target.closest("li").remove();
+                buildJsonProfile();
             }
         });
-    });
+    }
+});
 </script>
 @endpush
