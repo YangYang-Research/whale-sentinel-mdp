@@ -36,6 +36,7 @@ class WSAgentSeeder extends Seeder
                     'detect_http_large_request' => true,
                     'detect_sql_injection' => true,
                     'detect_http_verb_tampering' => true,
+                    'detect_unknow_attack' => true
                 ],
                 'secure_response_headers' => [
                     'enable' => true,

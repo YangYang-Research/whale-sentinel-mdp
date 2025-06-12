@@ -1,4 +1,4 @@
-<p>Secure Response Header</p>
+<p><strong>Secure Response Header</strong></p>
 <div class="form-group form-check">
     <input type="checkbox" class="form-check-input" id="secure_response_headers_enable" checked>
     <label class="form-check-label">Enable Secure Response Headers</label>
@@ -39,7 +39,7 @@
                     <div class="form-group form-check">
                         <input type="checkbox" class="form-check-input secure-header"
                                data-key="{{ $key }}" data-value="{{ $value }}"
-                               id="header_{{ Str::slug($key, '_') }}" checked>
+                               id="header_{{ Str::slug($key, '_') }}">
                         <label class="form-check-label">
                             {{ $key }}: <code>{{ $value }}</code>
                         </label>

@@ -1,4 +1,4 @@
-<p>Agent Model</p>
+<p><strong>Agent Model</strong></p>
 <div class="form-group">
     <label>Running Mode</label>
     <select class="form-control" id="running_mode">
@@ -11,7 +11,7 @@
 </div>
 
 <div class="form-group">
-    <label>Last Run Mode (Default: lite)</label>
+    <label>Last Run Mode (Default: Lite)</label>
     <select class="form-control" id="last_run_mode">
         <option value="">-- Select Last Run Mode --</option>
         <option value="off">Off</option>

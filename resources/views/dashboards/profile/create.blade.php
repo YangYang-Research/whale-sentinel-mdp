@@ -25,7 +25,7 @@
                 <select class="form-control" id="type" name="type">
                     <option value="">-- Select Profile Type --</option>
                     <option value="agent">Agent</option>
-                    <option value="service">Service</option>
+                    <option value="common-attack-detection-service">common-attack-detection-service</option>
                 </select>
             </div>
 
@@ -39,30 +39,49 @@
                 <input type="text" id="description" name="description" class="form-control" value="{{ old('description') }}" required>
             </div>
 
-            <div class="form-group" id="partial-profile-form">
-                <label>Configure Profile</label>
+            {{-- Agent profile form --}}
+            <div class="form-group" id="partial-profile-form" style="display: none;">
+                <label>Configure Agent Profile</label>
                 <div class="row">
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.running_mode')
+                        @include('dashboards.partials.profile_form_visualizer.agent.running_mode')
                     </div>
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.ws_module_web_attack_detection')
+                        @include('dashboards.partials.profile_form_visualizer.agent.ws_module_web_attack_detection')
                     </div>
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.ws_module_dga_detection')
+                        @include('dashboards.partials.profile_form_visualizer.agent.ws_module_dga_detection')
                     </div>
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.ws_module_common_attack_detection')
+                        @include('dashboards.partials.profile_form_visualizer.agent.ws_module_common_attack_detection')
                     </div>
                     <div class="col-md-8">
-                        @include('dashboards.partials.profile_form_visualizer.secure_response_headers')
+                        @include('dashboards.partials.profile_form_visualizer.agent.secure_response_headers')
                     </div>
                 </div>
             </div>
             
+            {{-- Service profile form --}}
+            <div class="form-group" id="service-profile-form" style="display: none;">
+                <label>Configure Service Profile</label>
+                <div class="row">
+                    <div class="col-md-4">
+                        @include('dashboards.partials.profile_form_visualizer.service.http_large_request')
+                    </div>
+                    <div class="col-md-8">
+                        @include('dashboards.partials.profile_form_visualizer.service.http_verb_tampering')
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        @include('dashboards.partials.profile_form_visualizer.service.rule_patterns')
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="profile">Profile (JSON format)</label>
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -94,6 +113,9 @@
 @push('script')
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    const typeSelect = document.getElementById('type');
+    const agentForm = document.getElementById('partial-profile-form');
+    const serviceForm = document.getElementById('service-profile-form');
     const textarea = document.getElementById("profile");
     const errorMsg = document.getElementById("json-error");
 
@@ -123,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function buildJsonProfile() {
+    function buildJsonAgentProfile() {
         const profile = {
             profile: {}
         };
@@ -223,6 +245,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function toggleForms() {
+        const selectedType = typeSelect.value;
+        if (selectedType === 'agent') {
+            agentForm.style.display = 'block';
+            serviceForm.style.display = 'none';
+
+            const inputFields = document.querySelectorAll("#partial-profile-form input, #partial-profile-form select");
+            if (inputFields.length > 0) {
+                inputFields.forEach(el => el.addEventListener("input", buildJsonAgentProfile));
+                buildJsonAgentProfile(); // initial call
+            }
+
+        } else if (selectedType === 'common-attack-detection-service') {
+            agentForm.style.display = 'none';
+            serviceForm.style.display = 'block';
+        } else {
+            agentForm.style.display = 'none';
+            serviceForm.style.display = 'none';
+            textarea.value = JSON.stringify({}, null, 4);
+        }
+    }
+
+    typeSelect.addEventListener('change', toggleForms);
+
+    // Initialize on page load in case of validation errors / old input
+    toggleForms();
+
     function customEncode(str) {
         return str
             .replace(/"/g, '&quot;')
@@ -232,13 +281,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .replace(/\//g, '&#47;')
             .replace(/{/g, '&#123;')
             .replace(/}/g, '&#125;');
-    }
-
-    // Bind event to all inputs and selects
-    const inputFields = document.querySelectorAll("#partial-profile-form input, #partial-profile-form select");
-    if (inputFields.length > 0) {
-        inputFields.forEach(el => el.addEventListener("input", buildJsonProfile));
-        buildJsonProfile(); // initial call
     }
 
     // Add custom header
@@ -265,14 +307,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 headerList.appendChild(item);
                 keyInput.value = '';
                 valueInput.value = '';
-                buildJsonProfile(); // update json
+                buildJsonAgentProfile(); // update json
             }
         });
 
         headerList.addEventListener("click", function (e) {
             if (e.target.classList.contains("btn-remove")) {
                 e.target.closest("li").remove();
-                buildJsonProfile();
+                buildJsonAgentProfile();
             }
         });
     }

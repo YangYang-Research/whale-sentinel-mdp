@@ -1,4 +1,4 @@
-<p>Common Attack Detection</p>
+<p><strong>Common Attack Detection</strong></p>
 <div class="form-group form-check">
     <input type="checkbox" class="form-check-input" id="ws_module_common_attack_detection_enable" checked>
     <label class="form-check-label">Enable Common Attack Detection</label>

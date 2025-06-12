@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\WSService;
 
 class ServiceController extends Controller
 {
@@ -12,7 +13,11 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        $services = WSService::all();
+
+        return view("dashboards.service.index",[
+            'services' => $services
+        ]);
     }
 
     /**
@@ -44,7 +49,11 @@ class ServiceController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $service = WSService::find($id);
+        dd($service->profile);
+        return view("dashboards.service.edit",[
+            'services' => $services
+        ]);
     }
 
     /**

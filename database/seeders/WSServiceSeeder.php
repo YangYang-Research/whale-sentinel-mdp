@@ -26,7 +26,7 @@ class WSServiceSeeder extends Seeder
                 ],
                 'http_verb_patterns' => '(?i)(HEAD|OPTIONS|TRACE|CONNECT|PROPFIND|PROPPATCH|MKCOL|COPY|MOVE|LOCK|UNLOCK)',
                 'max_size_request' => '2048',
-                'patching_patterns' => [
+                'unknow_attacl_patterns' => [
                     '^(?!.*(\\.\\.|/|\\\\)).*$',
                 ],
             ],

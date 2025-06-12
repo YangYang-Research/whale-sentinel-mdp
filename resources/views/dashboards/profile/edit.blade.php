@@ -42,22 +42,22 @@
                 <label>Configure Profile</label>
                 <div class="row">
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.running_mode')
+                        @include('dashboards.partials.profile_form_visualizer.agent.running_mode')
                     </div>
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.ws_module_web_attack_detection')
+                        @include('dashboards.partials.profile_form_visualizer.agent.ws_module_web_attack_detection')
                     </div>
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.ws_module_dga_detection')
+                        @include('dashboards.partials.profile_form_visualizer.agent.ws_module_dga_detection')
                     </div>
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.ws_module_common_attack_detection')
+                        @include('dashboards.partials.profile_form_visualizer.agent.ws_module_common_attack_detection')
                     </div>
                     <div class="col-md-8">
-                        @include('dashboards.partials.profile_form_visualizer.secure_response_headers')
+                        @include('dashboards.partials.profile_form_visualizer.agent.secure_response_headers')
                     </div>
                 </div>
             </div>
