@@ -8,6 +8,7 @@ use App\Models\WSAgent;
 use App\Models\WSApplication;
 use App\Models\WSProfile;
 use Illuminate\Support\Str;
+use App\Jobs\SyncProfileToServiceJob;
 
 class AgentController extends Controller
 {
@@ -58,7 +59,7 @@ class AgentController extends Controller
             'application_id' => 'required|integer',
             'name'    => 'required|max:255',
             'description' => 'required|max:255',
-            'agent_type' => 'required|in:FlaskAgent,DjangoAgent,FastAPIAgent,SpringAgent,GinAgent,NodeAgent,LaravelAgent,RailsAgent',
+            'agent_type' => 'required|in:FlaskAgent,DjangoAgent,FastAPIAgent,SpringAgent,GinAgent,NodeAgent,NextAgent,LaravelAgent,CakeAgent,RailsAgent',
             'profile' => 'required|string',
         ]);
 
@@ -81,6 +82,9 @@ class AgentController extends Controller
         $agent->type = $request->agent_type;
         $agent->profile = $request->profile;
         $agent->save();
+
+        SyncProfileToServiceJob::dispatch('agent', $agent->agent_id, $agent->name);
+        
         return redirect()->route('agent.index')->with(['message' => 'Agent created successfully.']);
     }
 
@@ -133,7 +137,7 @@ class AgentController extends Controller
             'application_id' => 'required|integer',
             'name'    => 'required|max:255',
             'description' => 'required|max:255',
-            'agent_type' => 'required|in:FlaskAgent,DjangoAgent,FastAPIAgent,SpringAgent,GinAgent,NodeAgent,LaravelAgent,RailsAgent',
+            'agent_type' => 'required|in:FlaskAgent,DjangoAgent,FastAPIAgent,SpringAgent,GinAgent,NodeAgent,NextAgent,LaravelAgent,CakeAgent,RailsAgent',
             'profile' => 'required|string',
         ]);
 
@@ -154,6 +158,9 @@ class AgentController extends Controller
         $agent->type = $request->agent_type;
         $agent->profile = $request->profile;
         $agent->save();
+
+        SyncProfileToServiceJob::dispatch('agent', $agent->agent_id, $agent->name);
+
         return redirect()->route('agent.index')->with(['message' => 'Agent updated successfully.']);
     }
 

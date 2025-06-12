@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\WSService;
 use App\Models\WSAgent;
 use App\Traits\ProfileValidationTrait;
 use Illuminate\Support\Facades\Validator;
@@ -115,6 +115,7 @@ class ProfileController extends Controller
                 'payload.data.name'  => 'required|string|max:255',
                 'payload.data.id'  => 'required|string|max:255',
                 'payload.data.profile' => 'required|array',
+                'payload.data.ipaddress' => 'required|string',
                 'request_created_at' => [
                     'required',
                     'date_format:Y-m-d\TH:i:s\Z',
@@ -140,6 +141,7 @@ class ProfileController extends Controller
             $type = $request['payload']['data']['type'];
             $name = $request['payload']['data']['name'];
             $id = $request['payload']['data']['id'];
+            $ipAddress = $request['payload']['data']['ipaddress'];
             $requestCreatedAt = $request['request_created_at'];
             $newProfileData = $request['payload']['data']['profile'];
 
@@ -175,6 +177,8 @@ class ProfileController extends Controller
                 $currentProfile['profile'] = $this->deepMerge($currentProfile['profile'], $newProfileData);
 
                 $agent->profile = json_encode($currentProfile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                $agent->ipaddress = $ipAddress;
+                $agent->status = 'connected';
                 $agent->save();
 
                 return response()->json([
