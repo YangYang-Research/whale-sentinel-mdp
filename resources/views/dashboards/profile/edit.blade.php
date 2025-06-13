@@ -115,6 +115,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const beautifyBtn = document.getElementById("beautify-json");
     const profileType = document.getElementById("type")?.value;
 
+    if (textarea) {
+        textarea.addEventListener("input", function () {
+            try {
+                JSON.parse(textarea.value);
+                errorMsg.classList.add("d-none");
+                textarea.classList.remove("is-invalid");
+            } catch (e) {
+                errorMsg.classList.remove("d-none");
+                textarea.classList.add("is-invalid");
+            }
+        });
+    }
+
     function customEncode(str) {
         return str
             .replace(/"/g, '&quot;')
@@ -151,6 +164,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (profile.ws_module_dga_detection) {
                     document.getElementById("ws_module_dga_detection_enable").checked = !!profile.ws_module_dga_detection.enable;
                     document.getElementById("ws_module_dga_detection_threshold").value = profile.ws_module_dga_detection.threshold || 0;
+                }
+
+                // Request Rate Limit
+                if (profile.ws_request_rate_limit) {
+                    document.getElementById("ws_request_rate_limit_enable").checked = !profile.ws_request_rate_limit.enable;
+                    document.getElementById("ws_request_rate_limit_threshold").value = profile.ws_request_rate_limit.threshold || 0;
                 }
 
                 // Common Attack Detection
@@ -272,6 +291,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 threshold: parseInt(document.getElementById("ws_module_dga_detection_threshold").value) || 0
             };
 
+            profile.ws_request_rate_limit = {
+                enable: document.getElementById("ws_request_rate_limit_enable").checked,
+                threshold: parseInt(document.getElementById("ws_request_rate_limit_threshold").value) || 0
+            };
+
             profile.ws_module_common_attack_detection = {
                 enable: document.getElementById("ws_module_common_attack_detection_enable").checked,
                 detect_cross_site_scripting: document.getElementById("detect_cross_site_scripting").checked,
@@ -340,8 +364,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const finalJson = JSON.stringify({ profile }, null, 2);
-        textarea.value = finalJson;
+        if (textarea) textarea.value = finalJson;
         errorMsg.classList.add("d-none");
+
+        // Validate JSON again
+        try {
+            JSON.parse(finalJson);
+            errorMsg?.classList.add("d-none");
+            textarea?.classList.remove("is-invalid");
+        } catch {
+            errorMsg?.classList.remove("d-none");
+            textarea?.classList.add("is-invalid");
+        }
     }
 
 

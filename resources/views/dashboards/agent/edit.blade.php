@@ -76,7 +76,7 @@
                 </select>
             </div>
 
-            <div class="form-group" id="partial-profile-form">
+            <div class="form-group" id="partial-agent-profile-form">
                 <label>Configure Profile</label>
                 <div class="row">
                     <div class="col-md-4">
@@ -220,6 +220,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const originalAgentProfile = @json(json_decode($agent->profile, true));
     const profileTextarea = document.getElementById("profile");
 
+    if (textarea) {
+        textarea.addEventListener("input", function () {
+            try {
+                JSON.parse(textarea.value);
+                errorMsg.classList.add("d-none");
+                textarea.classList.remove("is-invalid");
+            } catch (e) {
+                errorMsg.classList.remove("d-none");
+                textarea.classList.add("is-invalid");
+            }
+        });
+    }
+
     function customEncode(str) {
         return str
             .replace(/"/g, '&quot;')
@@ -255,6 +268,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (profile.ws_module_dga_detection) {
                 document.getElementById("ws_module_dga_detection_enable").checked = !!profile.ws_module_dga_detection.enable;
                 document.getElementById("ws_module_dga_detection_threshold").value = profile.ws_module_dga_detection.threshold || 0;
+            }
+
+            // Request Rate Limit
+            if (profile.ws_request_rate_limit) {
+                document.getElementById("ws_request_rate_limit_enable").checked = !profile.ws_request_rate_limit.enable;
+                document.getElementById("ws_request_rate_limit_threshold").value = profile.ws_request_rate_limit.threshold || 0;
             }
 
             // Common Attack Detection
@@ -327,6 +346,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const d = profile.ws_module_dga_detection;
             document.getElementById("ws_module_dga_detection_enable").checked = d.enable;
             document.getElementById("ws_module_dga_detection_threshold").value = d.threshold || 0;
+        }
+        
+        // Request Rate Limit
+        if (profile.ws_request_rate_limit) {
+            const r = profile.ws_request_rate_limit;
+            document.getElementById("ws_request_rate_limit_enable").checked = r.enable;
+            document.getElementById("ws_request_rate_limit_threshold").value = r.threshold || 0;
         }
 
         // Common Attack Detection
@@ -418,6 +444,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 enable: document.getElementById("ws_module_dga_detection_enable").checked,
                 threshold: parseInt(document.getElementById("ws_module_dga_detection_threshold").value) || 0
             },
+            ws_request_rate_limit: {
+                enable: document.getElementById("ws_request_rate_limit_enable").checked,
+                threshold: parseInt(document.getElementById("ws_request_rate_limit_threshold").value) || 0
+            },
             ws_module_common_attack_detection: {
                 enable: document.getElementById("ws_module_common_attack_detection_enable").checked,
                 detect_cross_site_scripting: document.getElementById("detect_cross_site_scripting").checked,
@@ -447,6 +477,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const finalJson = JSON.stringify({ profile }, null, 2);
         textarea.value = finalJson;
         errorMsg.classList.add("d-none");
+
+        // Validate JSON again
+        try {
+            JSON.parse(finalJson);
+            errorMsg?.classList.add("d-none");
+            textarea?.classList.remove("is-invalid");
+        } catch {
+            errorMsg?.classList.remove("d-none");
+            textarea?.classList.add("is-invalid");
+        }
     }
 
     // Add custom header
@@ -499,7 +539,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Auto build JSON when inputs change
-    const inputFields = document.querySelectorAll("#partial-profile-form input, #partial-profile-form select");
+    const inputFields = document.querySelectorAll("#partial-agent-profile-form input, #partial-agent-profile-form select");
     if (inputFields.length > 0) {
         inputFields.forEach(el => {
             el.addEventListener("input", buildJsonProfile);

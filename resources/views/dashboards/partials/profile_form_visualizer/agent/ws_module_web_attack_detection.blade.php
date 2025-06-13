@@ -8,6 +8,6 @@
     <label class="form-check-label">Enable Detect Header</label>
 </div>
 <div class="form-group">
-    <label>Web Attack Threshold</label>
+    <label>Web Attack Threshold (% Accuracy)</label>
     <input type="number" class="form-control" id="ws_module_web_attack_detection_threshold" value="80">
 </div>

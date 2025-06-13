@@ -19,9 +19,9 @@ class ProfileController extends Controller
         try {
             $validator = Validator::make($request->all(),[
                 'event_info' => 'required|string',
-                'payload.data.type' => ['required', Rule::in(['agent', 'service'])],
+                'payload.data.type' => ['required', Rule::in(['agent', 'common-attack-detection-service'])],
                 'payload.data.name'  => 'required|string|max:255',
-                'payload.data.id'  => 'required|string|max:255',
+                'payload.data.id'  => 'string|max:255',
                 'request_created_at' => [
                     'required',
                     'date_format:Y-m-d\TH:i:s\Z',
@@ -73,7 +73,7 @@ class ProfileController extends Controller
                 ]);
             }
 
-            if ($type === 'service') {
+            if ($type === 'common-attack-detection-service') {
                 $service = WsService::where('name', $name)->first();
                 if (!$service) {
                     return response()->json([
@@ -86,7 +86,7 @@ class ProfileController extends Controller
                     'status'  => 'Success',
                     'message' => 'Request processed successfully',
                     'data'  => [
-                        'type'    => 'service',
+                        'type'    => 'common-attack-detection-service',
                         'name'    => $service->name,
                         'profile' => $service->profile,
                     ],
@@ -111,7 +111,7 @@ class ProfileController extends Controller
         try {
             $validator = Validator::make($request->all(),[
                 'event_info' => 'required|string',
-                'payload.data.type' => ['required', Rule::in(['agent', 'service'])],
+                'payload.data.type' => ['required', Rule::in(['agent', 'common-attack-detection-service'])],
                 'payload.data.name'  => 'required|string|max:255',
                 'payload.data.id'  => 'required|string|max:255',
                 'payload.data.profile' => 'required|array',
@@ -196,7 +196,7 @@ class ProfileController extends Controller
                 ]);
             }
 
-            if ($type === 'service') {
+            if ($type === 'common-attack-detection-service') {
                 $service = WsService::where('name', $name)->first();
                 if (!$service) {
                     return response()->json([
@@ -226,7 +226,7 @@ class ProfileController extends Controller
                     'status'  => 'Success',
                     'message' => 'Request processed successfully',
                     'data'  => [
-                        'type'    => 'service',
+                        'type'    => 'common-attack-detection-service',
                         'name'    => $service->name,
                         'profile' => $service->profile,
                     ],

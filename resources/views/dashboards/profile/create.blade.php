@@ -187,6 +187,17 @@ document.addEventListener("DOMContentLoaded", function () {
             };
         }
 
+        // Request Rate Limit
+        const requestRLEnable =  document.getElementById("ws_request_rate_limit_enable");
+        const requestRLThreshold = document.getElementById("ws_request_rate_limit_threshold");
+
+        if (requestRLEnable && requestRLThreshold) {
+            profile.profile.ws_request_rate_limit = {
+                enable: requestRLEnable.checked,
+                threshold: parseInt(requestRLThreshold.value) || 0
+            };
+        }
+
         // Common Attack Detection
         const commonEnable = document.getElementById("ws_module_common_attack_detection_enable");
         const xss = document.getElementById("detect_cross_site_scripting");

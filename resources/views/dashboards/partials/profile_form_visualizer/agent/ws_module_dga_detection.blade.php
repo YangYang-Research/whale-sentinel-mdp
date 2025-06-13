@@ -4,6 +4,6 @@
     <label class="form-check-label">Enable DGA Detection</label>
 </div>
 <div class="form-group">
-    <label>DGA Threshold</label>
+    <label>DGA Threshold (% Accuracy)</label>
     <input type="number" class="form-control" id="ws_module_dga_detection_threshold" value="80">
 </div>

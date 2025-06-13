@@ -1,9 +1,17 @@
+<p><strong>Request Rate Limit</strong></p>
+<div class="form-group form-check">
+    <input type="checkbox" class="form-check-input" id="ws_request_rate_limit_enable">
+    <label class="form-check-label">Enable Request Rate Limit</label>
+</div>
+<div class="form-group">
+    <label>Rate Limit Threshold (RPM)</label>
+    <input type="number" class="form-control" id="ws_request_rate_limit_threshold" value="100">
+</div>
 <p><strong>Common Attack Detection</strong></p>
 <div class="form-group form-check">
     <input type="checkbox" class="form-check-input" id="ws_module_common_attack_detection_enable" checked>
     <label class="form-check-label">Enable Common Attack Detection</label>
 </div>
-
 <div class="ml-3">
     <div class="form-group form-check">
         <input type="checkbox" class="form-check-input" id="detect_cross_site_scripting" checked>

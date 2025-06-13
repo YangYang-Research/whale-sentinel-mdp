@@ -15,6 +15,10 @@ class WSProfileSeeder extends Seeder
                 'last_run_mode' => 'lite',
                 'lite_mode_data_is_synchronized' => false,
                 'lite_mode_data_synchronize_status' => 'failure',
+                'ws_request_rate_limit' => [
+                    'enable' => true,
+                    'threshold' => 100,
+                ],
                 'ws_module_web_attack_detection' => [
                     'enable' => true,
                     'detect_header' => false,
