@@ -16,18 +16,18 @@ class WSServiceSeeder extends Seeder
         $profile = [
             'profile' => [
                 'xss_patterns' => [
-                    '(?:https?://|//)[^\\s/]+\\.js',
-                    '((%3C)|<)((%2F)|/)*[a-z0-9%]+((%3E)|>)',
-                    '((\\%3C)|<)((\\%69)|i|(\\%49))((\\%6D)|m|(\\%4D))((\\%67)|g|(\\%47))[^\n]+((\\%3E)|>)',
+                    'xss_pattern_1' => '(?:https?://|//)[^\\s/]+\\.js',
+                    'xss_pattern_2' => '((%3C)|<)((%2F)|/)*[a-z0-9%]+((%3E)|>)',
+                    'xss_pattern_3' => '((\\%3C)|<)((\\%69)|i|(\\%49))((\\%6D)|m|(\\%4D))((\\%67)|g|(\\%47))[^\n]+((\\%3E)|>)',
                 ],
                 'sql_patterns' => [
-                    '(?:select\\s+.+\\s+from\\s+.+)',
-                    '(?:insert\\s+.+\\s+into\\s+.+)',
+                    'sqli_pattern_2' => '(?:select\\s+.+\\s+from\\s+.+)',
+                    'sqli_pattern_3' => '(?:insert\\s+.+\\s+into\\s+.+)',
                 ],
-                'http_verb_patterns' => '(?i)(HEAD|OPTIONS|TRACE|CONNECT|PROPFIND|PROPPATCH|MKCOL|COPY|MOVE|LOCK|UNLOCK)',
+                'http_verb_patterns' => '(?i)(GET|POST|PUT|DELETE)',
                 'max_size_request' => '2048',
-                'unknow_attacl_patterns' => [
-                    '^(?!.*(\\.\\.|/|\\\\)).*$',
+                'unknow_attack_patterns' => [
+                   'unknow_pattern_1' =>  '^(?!.*(\\.\\.|/|\\\\)).*$',
                 ],
             ],
         ];

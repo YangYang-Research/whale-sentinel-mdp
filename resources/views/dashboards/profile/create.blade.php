@@ -21,7 +21,7 @@
             @method('POST')
 
             <div class="form-group">
-                <label for="type">Select Type</label>
+                <label for="type">Select Profile Type</label>
                 <select class="form-control" id="type" name="type">
                     <option value="">-- Select Profile Type --</option>
                     <option value="agent">Agent</option>
@@ -40,7 +40,7 @@
             </div>
 
             {{-- Agent profile form --}}
-            <div class="form-group" id="partial-profile-form" style="display: none;">
+            <div class="form-group" id="partial-agent-profile-form" style="display: none;">
                 <label>Configure Agent Profile</label>
                 <div class="row">
                     <div class="col-md-4">
@@ -65,7 +65,7 @@
             </div>
             
             {{-- Service profile form --}}
-            <div class="form-group" id="service-profile-form" style="display: none;">
+            <div class="form-group" id="partial-service-cad-profile-form" style="display: none;">
                 <label>Configure Service Profile</label>
                 <div class="row">
                     <div class="col-md-4">
@@ -114,8 +114,8 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const typeSelect = document.getElementById('type');
-    const agentForm = document.getElementById('partial-profile-form');
-    const serviceForm = document.getElementById('service-profile-form');
+    const agentForm = document.getElementById('partial-agent-profile-form');
+    const serviceForm = document.getElementById('partial-service-cad-profile-form');
     const textarea = document.getElementById("profile");
     const errorMsg = document.getElementById("json-error");
 
@@ -245,21 +245,81 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function buildJsonCADServiceProfile() {
+        const textarea = document.getElementById("profile");
+        const errorMsg = document.getElementById("json-error");
+
+        const profile = {
+            profile: {}
+        };
+
+        // HTTP request size & method
+        const httpLargeRequest = document.getElementById("http_request_max_size");
+        const selectedHttpMethods = Array.from(document.querySelectorAll('input[name="http_methods[]"]:checked'))
+            .map(el => el.value.toUpperCase());
+
+        if (httpLargeRequest && selectedHttpMethods.length > 0) {
+            const httpVerbPattern = `(?i)(${selectedHttpMethods.join('|')})`;
+
+            profile.profile.http_verb_patterns = httpVerbPattern;
+            profile.profile.max_size_request = httpLargeRequest.value;
+        }
+
+        // Custom regex patterns (XSS, SQL, Unknown Attack)
+        const regexItems = document.querySelectorAll(".custom-regex-item");
+        const patterns = {
+            xss_patterns: {},
+            sql_patterns: {},
+            unknow_attack_patterns: {}
+        };
+
+        regexItems.forEach(item => {
+            const type = item.dataset.type; // ex: xss_patterns
+            const key = item.dataset.key;
+            const value = item.dataset.value;
+
+            if (type && key && value && patterns[type]) {
+                patterns[type][key] = value;
+            }
+        });
+
+        // Merge into profile
+        Object.assign(profile.profile, patterns);
+
+        const jsonStr = JSON.stringify(profile, null, 4);
+        if (textarea) textarea.value = jsonStr;
+
+        // Validate JSON
+        try {
+            JSON.parse(jsonStr);
+            errorMsg?.classList.add("d-none");
+            textarea?.classList.remove("is-invalid");
+        } catch {
+            errorMsg?.classList.remove("d-none");
+            textarea?.classList.add("is-invalid");
+        }
+    }
+
+
+    function addFormListeners(formSelector, buildJsonFn) {
+        const inputFields = document.querySelectorAll(`${formSelector} input, ${formSelector} select`);
+        inputFields.forEach(el => {
+            el.removeEventListener("input", buildJsonFn); // tránh trùng lặp
+            el.addEventListener("input", buildJsonFn);
+        });
+        buildJsonFn();
+    }
+
     function toggleForms() {
         const selectedType = typeSelect.value;
         if (selectedType === 'agent') {
             agentForm.style.display = 'block';
             serviceForm.style.display = 'none';
-
-            const inputFields = document.querySelectorAll("#partial-profile-form input, #partial-profile-form select");
-            if (inputFields.length > 0) {
-                inputFields.forEach(el => el.addEventListener("input", buildJsonAgentProfile));
-                buildJsonAgentProfile(); // initial call
-            }
-
+            addFormListeners("#partial-agent-profile-form", buildJsonAgentProfile);
         } else if (selectedType === 'common-attack-detection-service') {
             agentForm.style.display = 'none';
             serviceForm.style.display = 'block';
+            addFormListeners("#partial-service-cad-profile-form", buildJsonCADServiceProfile);
         } else {
             agentForm.style.display = 'none';
             serviceForm.style.display = 'none';
@@ -315,6 +375,47 @@ document.addEventListener("DOMContentLoaded", function () {
             if (e.target.classList.contains("btn-remove")) {
                 e.target.closest("li").remove();
                 buildJsonAgentProfile();
+            }
+        });
+    }
+
+    const addRegexBtn = document.getElementById("add-custom-regex");
+    const regexTypeSelect = document.getElementById("regex-type");
+    const regexKeyInput = document.getElementById("custom-regex-key");
+    const regexValueInput = document.getElementById("custom-regex-value");
+    const regexList = document.getElementById("custom-regex-list");
+
+    if (addRegexBtn && regexKeyInput && regexValueInput && regexList && regexTypeSelect) {
+        addRegexBtn.addEventListener("click", function () {
+            const key = regexKeyInput.value.trim();
+            const value = regexValueInput.value.trim();
+            const type = regexTypeSelect.value;
+
+            if (key && value && type) {
+                const encodedKey = customEncode(key);
+                const encodedValue = customEncode(value);
+
+                const item = document.createElement("li");
+                item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-regex-item");
+                item.dataset.key = encodedKey;
+                item.dataset.value = encodedValue;
+                item.dataset.type = type;
+                item.innerHTML = `<span><strong>[${type}] ${encodedKey}</strong>: <code>${encodedValue}</code></span>
+                                <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
+                regexList.appendChild(item);
+
+                regexKeyInput.value = '';
+                regexValueInput.value = '';
+                regexTypeSelect.selectedIndex = 0;
+
+                buildJsonCADServiceProfile(); // cập nhật JSON
+            }
+        });
+
+        regexList.addEventListener("click", function (e) {
+            if (e.target.classList.contains("btn-remove")) {
+                e.target.closest("li").remove();
+                buildJsonCADServiceProfile(); // cập nhật JSON
             }
         });
     }

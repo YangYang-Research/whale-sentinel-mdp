@@ -39,7 +39,7 @@ class ProfileController extends Controller
     public function store(Request $request, WSProfile $profile)
     {
         $validated = $request->validate([
-            'type'    => 'required|in:agent,service',
+            'type'    => 'required|in:agent,common-attack-detection-service',
             'name'    => 'required|max:255',
             'description' => 'required|max:255',
             'profile' => 'required|string',
@@ -88,7 +88,7 @@ class ProfileController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'type'    => 'required|in:agent,service',
+            'type'    => 'required|in:agent,common-attack-detection-service',
             'name'    => 'required|max:255',
             'description' => 'required|max:255',
             'profile' => 'required|string',

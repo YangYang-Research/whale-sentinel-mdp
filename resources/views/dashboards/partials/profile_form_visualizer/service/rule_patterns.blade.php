@@ -1,11 +1,11 @@
 <p><strong>Regex Patterns</strong></p>
 <div class="form-group">
     <label>Type</label>
-    <select class="form-control" id="regex_patterns">
+    <select class="form-control" id="regex-type">
         <option value="">-- Select Type Attack --</option>
-        <option value="sqli">SQL Injection</option>
-        <option value="xss">Cross Site Scripting</option>
-        <option value="unknow">Unknow</option>
+        <option value="sql_patterns">SQL Injection</option>
+        <option value="xss_patterns">Cross Site Scripting</option>
+        <option value="unknow_attack_patterns">Unknow Attack</option>
     </select>
 </div>
 
@@ -17,3 +17,7 @@
         <button type="button" class="btn btn-sm btn-outline-primary" id="add-custom-regex">Add</button>
     </div>
 </div>
+
+<ul class="list-group mt-2" id="custom-regex-list">
+    <!-- Custom regex will be listed here -->
+</ul>
