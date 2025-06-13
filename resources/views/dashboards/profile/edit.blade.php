@@ -21,7 +21,7 @@
 
             <div class="form-group">
                 <label for="type">Profile Type</label>
-                <input type="text" id="type" name="type" class="form-control" value="{{ old('name', $profile->type) }}" disabled>
+                <input type="text" id="type" name="type" class="form-control" value="{{ old('name', $profile->type) }}" readonly>
             </div>
 
             <div class="form-group">
@@ -70,7 +70,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         @include('dashboards.partials.profile_form_visualizer.service.rule_patterns')
                     </div>
                 </div>
@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 patternList.innerHTML = "";
 
                 // Danh sách các nhóm pattern bạn quan tâm
-                const patternGroups = ["xss_patterns", "sql_patterns", "unknow_attacl_patterns"];
+                const patternGroups = ["xss_patterns", "sql_patterns", "unknow_attack_patterns"];
 
                 patternGroups.forEach(group => {
                     const patterns = profile[group] || {};
@@ -233,10 +233,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         const item = document.createElement("li");
                         const encodedKey = customEncode(key);
                         const encodedValue = customEncode(value);
+
                         item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-pattern-item");
                         item.dataset.group = group;
-                        item.dataset.key = encodedKey;
-                        item.dataset.value = encodedValue;
+                        item.dataset.key = key;
+                        item.dataset.value = value;
                         item.innerHTML = `
                             <span><strong>${encodedKey}</strong>: <code>${encodedValue}</code></span>
                             <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
@@ -299,22 +300,43 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (isCADService) {
+            profile.max_size_request = parseInt(document.getElementById("http_request_max_size").value) || 0;
+
+            // HTTP Verb Patterns
+            const allMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
+            const enabledMethods = allMethods.filter(method => {
+                const checkbox = document.getElementById("method_" + method.toLowerCase());
+                return checkbox && checkbox.checked;
+            });
+            profile.http_verb_patterns = `(?i)(${enabledMethods.join('|')})`;
+
+            // Custom regex patterns
+            profile.xss_patterns = {};
+            profile.sql_patterns = {};
+            profile.unknow_attack_patterns = {};
+
+            document.querySelectorAll(".custom-pattern-item").forEach(item => {
+                const group = item.dataset.group;
+                const key = item.dataset.key;
+                const value = item.dataset.value;
+
+                if (!profile[group]) {
+                    profile[group] = {};
+                }
+
+                profile[group][key] = value;
+            });
+
+
+            // Nếu có rule_patterns riêng thì giữ lại
             const rulePatterns = [];
             document.querySelectorAll(".rule-pattern").forEach(input => {
                 const val = input.value.trim();
                 if (val) rulePatterns.push(val);
             });
-
-            profile.http_large_request = {
-                enable: document.getElementById("http_large_request_enable").checked,
-                threshold: parseInt(document.getElementById("http_large_request_threshold").value) || 0
-            };
-
-            profile.http_verb_tampering = {
-                // document.getElementById("max_size_request").value = profile.max_size_request || "";
-            };
-
-            profile.rule_patterns = rulePatterns;
+            if (rulePatterns.length > 0) {
+                profile.rule_patterns = rulePatterns;
+            }
         }
 
         const finalJson = JSON.stringify({ profile }, null, 2);
@@ -340,8 +362,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const item = document.createElement("li");
                 item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-header-item");
-                item.dataset.key = encodedKey;
-                item.dataset.value = encodedValue;
+                item.dataset.key = key;
+                item.dataset.value = value;
                 item.innerHTML = `<span><strong>${encodedKey}</strong>: <code>${encodedValue}</code></span>
                                   <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
                 headerList.appendChild(item);
@@ -359,6 +381,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
     
+    // Add custom patterns
+    const addRegexBtn = document.getElementById("add-custom-regex");
+    const regexTypeSelect = document.getElementById("regex-type");
+    const regexKeyInput = document.getElementById("custom-regex-key");
+    const regexValueInput = document.getElementById("custom-regex-value");
+    const regexList = document.getElementById("custom-regex-list");
+
+    if (addRegexBtn && regexKeyInput && regexValueInput && regexList && regexTypeSelect) {
+        addRegexBtn.addEventListener("click", function () {
+            const key = regexKeyInput.value.trim();
+            const value = regexValueInput.value.trim();
+            const type = regexTypeSelect.value;
+
+            if (key && value && type) {
+                const encodedKey = customEncode(key);
+                const encodedValue = customEncode(value);
+
+                const item = document.createElement("li");
+                item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-pattern-item");
+                item.dataset.key = encodedKey;
+                item.dataset.value = encodedValue;
+                item.dataset.group = type;
+                item.innerHTML = `<span><strong>[${type}] ${encodedKey}</strong>: <code>${encodedValue}</code></span>
+                                <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
+                regexList.appendChild(item);
+
+                regexKeyInput.value = '';
+                regexValueInput.value = '';
+                regexTypeSelect.selectedIndex = 0;
+
+                buildJsonProfile(); // cập nhật JSON
+            }
+        });
+
+        regexList.addEventListener("click", function (e) {
+            if (e.target.classList.contains("btn-remove")) {
+                e.target.closest("li").remove();
+                buildJsonProfile(); // cập nhật JSON
+            }
+        });
+    }
     // Beautify button
     if (beautifyBtn) {
         beautifyBtn.addEventListener("click", function () {
@@ -372,14 +435,18 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Auto build JSON when inputs change
-    const inputFields = document.querySelectorAll("#partial-agent-profile-form input, #partial-agent-profile-form select");
-    if (inputFields.length > 0) {
+    function attachInputListeners(formId, callback) {
+        const inputFields = document.querySelectorAll(`${formId} input, ${formId} select, ${formId} textarea`);
         inputFields.forEach(el => {
-            el.addEventListener("input", buildJsonProfile);
-            el.addEventListener("change", buildJsonProfile);
+            el.addEventListener("input", callback);
+            el.addEventListener("change", callback);
         });
     }
+
+    // Gọi hàm cho cả 2 form
+    attachInputListeners("#partial-agent-profile-form", buildJsonProfile);
+    attachInputListeners("#partial-service-cad-profile-form", buildJsonProfile);
+
 
     // Initial load
     populateFormFromJson();

@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         @include('dashboards.partials.profile_form_visualizer.service.rule_patterns')
                     </div>
                 </div>

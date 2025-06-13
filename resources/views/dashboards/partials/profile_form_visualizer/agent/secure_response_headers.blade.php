@@ -1,6 +1,6 @@
 <p><strong>Secure Response Header</strong></p>
 <div class="form-group form-check">
-    <input type="checkbox" class="form-check-input" id="secure_response_headers_enable" checked>
+    <input type="checkbox" class="form-check-input" id="secure_response_headers_enable">
     <label class="form-check-label">Enable Secure Response Headers</label>
 </div>
 
