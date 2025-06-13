@@ -1,6 +1,11 @@
 @extends('layouts.layout_dashboard')
 @push('css')
 <style>
+    .agent-btn {
+        margin-right: 12px !important;
+        margin-bottom: 10px !important;
+    }
+
     .is-invalid {
         border-color: #dc3545;
     }
@@ -8,66 +13,50 @@
 @endpush
 @section('dashboard')
 <!-- Page Heading -->
-<h1 class="h3 mb-4 text-gray-800">Update Service</h1>
+<h1 class="h3 mb-4 text-gray-800">Service Profile</h1>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Update Your Service</h6>
+        <div class="d-sm-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Your Service Profile</h6>
+        </div>
     </div>
     <div class="card-body">
-        <form action="{{ route('service.update', ['service' => $service]) }}" method="post">
-            @csrf
-            @method('PUT')
+        <div class="form-group">
+            <label for="name">Name: {{ $service->name }}</label>
+        </div>
 
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $service->name) }}" readonly>
-            </div>
-
-            <div class="form-group">
-                <label for="description">Description</label>
-                <input type="text" id="description" name="description" class="form-control" value="{{ old('description', $service->description) }}" required>
-            </div>
-
-            
-            <div class="form-group" id="partial-service-cad-profile-form">
-                <label>Configure Service Profile</label>
-                <div class="row">
-                    <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.service.http_large_request')
-                    </div>
-                    <div class="col-md-8">
-                        @include('dashboards.partials.profile_form_visualizer.service.http_verb_tampering')
-                    </div>
+        <div class="form-group">
+            <label for="description">Description: {{ $service->description }}</label>
+        </div>
+        
+        <div class="form-group" id="partial-service-cad-profile-form">
+            <label>Configure Service Profile</label>
+            <div class="row">
+                <div class="col-md-4">
+                    @include('dashboards.partials.profile_form_visualizer.service.http_large_request')
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        @include('dashboards.partials.profile_form_visualizer.service.rule_patterns')
-                    </div>
+                <div class="col-md-8">
+                    @include('dashboards.partials.profile_form_visualizer.service.http_verb_tampering')
                 </div>
             </div>
-
-            <div class="form-group">
-                <label for="profile">Profile (JSON format)</label>
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <small class="text-muted">Paste valid JSON and click "Beautify" to format it.</small>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="beautify-json">
-                        Beautify JSON
-                    </button>
-                </div>   
-                <textarea rows="10" cols="50" id="profile" name="profile" class="form-control" required>{{ old('profile', $service->profile) }}</textarea>
-                <small id="json-error" class="text-danger d-none">⚠️ Invalid JSON format</small>
+            <div class="row">
+                <div class="col-md-12">
+                    @include('dashboards.partials.profile_form_visualizer.service.rule_patterns')
+                </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                <button class="btn btn-sm btn-warning" type="back" onclick="goBack()">Back</button>
-                <button class="btn btn-sm btn-primary" type="submit">Submit</button>
-                <button class="btn btn-sm btn-danger" type="reset">Reset</button>
-            </div>
-        </form>
+        <div class="form-group">
+            <label for="profile">Service Profile Detail</label>  
+            <textarea rows="10" cols="50" id="profile" name="profile" class="form-control" readonly required>{{ $service->profile }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-sm btn-warning" type="back" onclick="goBack()">Back</button>
+        </div>
     </div>
 </div>
-
 @endsection
 @push('script')
 <script>
@@ -77,6 +66,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const beautifyBtn = document.getElementById("beautify-json");
     const profileTextarea = document.getElementById("profile");
 
+    const formElements = document.querySelectorAll("#partial-service-cad-profile-form input, #partial-service-cad-profile-form select, #partial-service-cad-profile-form textarea, #partial-service-cad-profile-form button");
+    formElements.forEach(el => {
+        el.disabled = true;
+    });
+    
     if (textarea) {
         textarea.addEventListener("input", function () {
             try {
@@ -152,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     item.dataset.value = value;
                     item.innerHTML = `
                         <span><strong>${encodedKey}</strong>: <code>${encodedValue}</code></span>
-                        <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
+                        <button class="btn btn-sm btn-danger btn-remove" style="display:none">Remove</button>`;
                     patternList.appendChild(item);
                 }
             });
@@ -204,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const finalJson = JSON.stringify({ profile }, null, 2);
         if (textarea) textarea.value = finalJson;
-        errorMsg.classList.add("d-none");
+        // errorMsg.classList.add("d-none");
 
         // Validate JSON again
         try {
@@ -240,7 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 item.dataset.value = encodedValue;
                 item.dataset.group = type;
                 item.innerHTML = `<span><strong>[${type}] ${encodedKey}</strong>: <code>${encodedValue}</code></span>
-                                <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
+                                <button class="btn btn-sm btn-danger btn-remove" style="display:none">Remove</button>`;
                 regexList.appendChild(item);
 
                 regexKeyInput.value = '';

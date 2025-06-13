@@ -145,6 +145,19 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.disabled = true;
     });
 
+    if (textarea) {
+        textarea.addEventListener("input", function () {
+            try {
+                JSON.parse(textarea.value);
+                errorMsg.classList.add("d-none");
+                textarea.classList.remove("is-invalid");
+            } catch (e) {
+                errorMsg.classList.remove("d-none");
+                textarea.classList.add("is-invalid");
+            }
+        });
+    }
+
     function customEncode(str) {
         return str
             .replace(/"/g, '&quot;')
@@ -180,6 +193,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (profile.ws_module_dga_detection) {
                 document.getElementById("ws_module_dga_detection_enable").checked = !!profile.ws_module_dga_detection.enable;
                 document.getElementById("ws_module_dga_detection_threshold").value = profile.ws_module_dga_detection.threshold || 0;
+            }
+
+            // Request Rate Limit
+            if (profile.ws_request_rate_limit) {
+                document.getElementById("ws_request_rate_limit_enable").checked = !profile.ws_request_rate_limit.enable;
+                document.getElementById("ws_request_rate_limit_threshold").value = profile.ws_request_rate_limit.threshold || 0;
             }
 
             // Common Attack Detection
@@ -243,6 +262,10 @@ document.addEventListener("DOMContentLoaded", function () {
             ws_module_dga_detection: {
                 enable: document.getElementById("ws_module_dga_detection_enable").checked,
                 threshold: parseInt(document.getElementById("ws_module_dga_detection_threshold").value) || 0
+            },
+            ws_request_rate_limit: {
+                enable: document.getElementById("ws_request_rate_limit_enable").checked,
+                threshold: parseInt(document.getElementById("ws_request_rate_limit_threshold").value) || 0
             },
             ws_module_common_attack_detection: {
                 enable: document.getElementById("ws_module_common_attack_detection_enable").checked,

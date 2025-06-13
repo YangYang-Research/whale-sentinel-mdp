@@ -8,6 +8,11 @@ use App\Models\WSService;
 
 class ServiceController extends Controller
 {
+    private function isValidJson($string)
+    {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -41,7 +46,11 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $service = WSService::find($id);
+
+        return view("dashboards.service.show",[
+            'service' => $service
+        ]);
     }
 
     /**
@@ -50,9 +59,9 @@ class ServiceController extends Controller
     public function edit(string $id)
     {
         $service = WSService::find($id);
-        dd($service->profile);
+
         return view("dashboards.service.edit",[
-            'services' => $services
+            'service' => $service
         ]);
     }
 
@@ -61,7 +70,23 @@ class ServiceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'description' => 'required|max:255',
+            'profile' => 'required|string',
+        ]);
+
+        $isValidJson = $this->isValidJson($request->profile);
+        if (!$isValidJson) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['profile' => 'Profile must be a valid JSON string.']);
+        }
+
+        $service = WSService::find($id);
+        $service->description = $request->description;
+        $service->profile = $request->profile;
+        $service->save();
+        return redirect()->route('service.index')->with(['message' => 'Profile updated successfully.']);
     }
 
     /**
