@@ -149,6 +149,7 @@ class ProfileController extends Controller
             $validation = $this->validatePayloadKeysExistHardcoded($newProfileData);
             if ($validation !== true) {
                 return response()->json([
+                    'status' => 'Error',
                     'message' => 'Invalid payload keys.',
                     'invalid_keys' => $validation
                 ], 422);
