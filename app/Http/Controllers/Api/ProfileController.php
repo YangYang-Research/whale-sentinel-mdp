@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\WSAgent;
+use App\Models\WSService;
 use App\Traits\ProfileValidationTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -19,9 +20,9 @@ class ProfileController extends Controller
         try {
             $validator = Validator::make($request->all(),[
                 'event_info' => 'required|string',
-                'payload.data.type' => ['required', Rule::in(['agent', 'common-attack-detection-service'])],
+                'payload.data.type' => ['required', Rule::in(['agent', 'service'])],
                 'payload.data.name'  => 'required|string|max:255',
-                'payload.data.id'  => 'string|max:255',
+                'payload.data.id'  => 'max:255',
                 'request_created_at' => [
                     'required',
                     'date_format:Y-m-d\TH:i:s\Z',
@@ -73,7 +74,7 @@ class ProfileController extends Controller
                 ]);
             }
 
-            if ($type === 'common-attack-detection-service') {
+            if ($type === 'service') {
                 $service = WsService::where('name', $name)->first();
                 if (!$service) {
                     return response()->json([
@@ -111,7 +112,7 @@ class ProfileController extends Controller
         try {
             $validator = Validator::make($request->all(),[
                 'event_info' => 'required|string',
-                'payload.data.type' => ['required', Rule::in(['agent', 'common-attack-detection-service'])],
+                'payload.data.type' => ['required', Rule::in(['agent'])],
                 'payload.data.name'  => 'required|string|max:255',
                 'payload.data.id'  => 'required|string|max:255',
                 'payload.data.profile' => 'required|array',
@@ -189,46 +190,6 @@ class ProfileController extends Controller
                         'name'    => $agent->name,
                         'id'      => $agent->agent_id,
                         'profile' => $agent->profile,
-                    ],
-                    'event_info' => '',
-                    'request_created_at' => $requestCreatedAt,
-                    'request_processed_at' => Carbon::now('UTC')->format('Y-m-d\TH:i:s\Z'),
-                ]);
-            }
-
-            if ($type === 'common-attack-detection-service') {
-                $service = WsService::where('name', $name)->first();
-                if (!$service) {
-                    return response()->json([
-                        'status' => 'Error',
-                        'message' => 'Service not found'
-                    ], 404);
-                }
-                $currentProfile = json_decode($service->profile, true);
-                if (!is_array($currentProfile)) {
-                    $currentProfile = ['profile' => []];
-                }
-                
-                if (!isset($currentProfile['profile']) || !is_array($currentProfile['profile'])) {
-                    $currentProfile['profile'] = [];
-                }
-
-                if (isset($newProfileData['profile'])) {
-                    unset($newProfileData['profile']);
-                }
-                
-                $currentProfile['profile'] = $this->deepMerge($currentProfile['profile'], $newProfileData);
-
-                $service->profile = json_encode($currentProfile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-                $service->save();
-
-                return response()->json([
-                    'status'  => 'Success',
-                    'message' => 'Request processed successfully',
-                    'data'  => [
-                        'type'    => 'common-attack-detection-service',
-                        'name'    => $service->name,
-                        'profile' => $service->profile,
                     ],
                     'event_info' => '',
                     'request_created_at' => $requestCreatedAt,
