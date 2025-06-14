@@ -26,6 +26,10 @@ class WSAgentSeeder extends Seeder
                     'detect_header' => false,
                     'threshold' => 80,
                 ],
+                'ws_request_rate_limit' => [
+                    'enable' => true,
+                    'threshold' => 100,
+                ],
                 'ws_module_dga_detection' => [
                     'enable' => true,
                     'threshold' => 80,
