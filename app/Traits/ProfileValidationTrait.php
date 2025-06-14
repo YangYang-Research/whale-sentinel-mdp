@@ -57,6 +57,19 @@ trait ProfileValidationTrait
             }
         }
 
+        // Additional value validation
+        $validSyncStates = ['successed', 'none', 'failure', 'inprogress'];
+
+        if (isset($flattenPayload['lite_mode_data_synchronize_status']) &&
+            !in_array($flattenPayload['lite_mode_data_synchronize_status'], $validSyncStates, true)) {
+            $invalidKeys[] = 'lite_mode_data_synchronize_status (invalid value)';
+        }
+
+        if (isset($flattenPayload['lite_mode_data_is_synchronized']) &&
+            !is_bool($flattenPayload['lite_mode_data_is_synchronized'])) {
+            $invalidKeys[] = 'lite_mode_data_is_synchronized (must be true or false)';
+        }
+
         return empty($invalidKeys) ? true : $invalidKeys;
     }
 

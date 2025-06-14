@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name', 255)->unique();
             $table->string('agent_id', 255)->unique();
             $table->text('description')->nullable();
-            $table->string('ipaddress')->nullable();
+            $table->string('ip_address')->nullable();
             $table->string('type', 255);
             $table->string('status')->default('disconnect');
             $table->text('profile');

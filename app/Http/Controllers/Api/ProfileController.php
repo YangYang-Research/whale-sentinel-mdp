@@ -15,6 +15,16 @@ class ProfileController extends Controller
 {
     use ProfileValidationTrait;
 
+    public function isValidIpAddress(?string $ip): string
+    {
+        if (is_null($ip) || $ip === '') {
+            return '';
+        }
+
+        return filter_var($ip, FILTER_VALIDATE_IP) !== false ? $ip : '';
+    }
+
+
     public function getProfile(Request $request)
     {
         try {
@@ -115,8 +125,8 @@ class ProfileController extends Controller
                 'payload.data.type' => ['required', Rule::in(['agent'])],
                 'payload.data.name'  => 'required|string|max:255',
                 'payload.data.id'  => 'required|string|max:255',
-                'payload.data.profile' => 'required|array',
-                'payload.data.ipaddress' => 'required|string',
+                'payload.data.profile' => 'nullable|array',
+                'payload.data.ip_address' => 'nullable|ip',
                 'request_created_at' => [
                     'required',
                     'date_format:Y-m-d\TH:i:s\Z',
@@ -142,7 +152,7 @@ class ProfileController extends Controller
             $type = $request['payload']['data']['type'];
             $name = $request['payload']['data']['name'];
             $id = $request['payload']['data']['id'];
-            $ipAddress = $request['payload']['data']['ipaddress'];
+            $ipAddress = $request['payload']['data']['ip_address'];
             $requestCreatedAt = $request['request_created_at'];
             $newProfileData = $request['payload']['data']['profile'];
 
@@ -179,8 +189,8 @@ class ProfileController extends Controller
                 $currentProfile['profile'] = $this->deepMerge($currentProfile['profile'], $newProfileData);
 
                 $agent->profile = json_encode($currentProfile, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-                $agent->ipaddress = $ipAddress;
-                $agent->status = 'connected';
+                $agent->ip_address = $this->isValidIpAddress($ipAddress);
+                $agent->status = $agent->ip_address === '' ? 'disconnected' : 'connected';
                 $agent->save();
 
                 return response()->json([
