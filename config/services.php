@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'whale_sentinel_services' => [
+        'verify_tls' => env('WHALE_SENTINEL_VERIFY_TLS', false),
+        'module_configuration_service_url' => env('WS_MODULE_CONFIGURATION_SERVICE_URL'),
+        'module_configuration_service_endpoint' => env('WS_MODULE_CONFIGURATION_SERVICE_ENDPOINT'),
+    ],
 
 ];
