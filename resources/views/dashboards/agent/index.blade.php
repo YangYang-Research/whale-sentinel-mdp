@@ -100,7 +100,7 @@
                                 {{ $agentType }}
                             @endif
                         </td>
-                        <td>{{ $agent->ipaddress }}</td>
+                        <td>{{ $agent->ip_address }}</td>
                         <td>@if($agent->status == 'connected')
                                 Connected
                             @else
