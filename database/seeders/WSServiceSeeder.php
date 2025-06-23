@@ -120,8 +120,8 @@ class WSServiceSeeder extends Seeder
 
                 'http_verb_patterns' => '(?i)(GET|POST|PUT|DELETE)',
                 'max_size_request' => 2,
-                'unknow_attack_patterns' => [
-                   'unknow_pattern_1' => '(?:\.\./|\.\.)+',
+                'unknown_attack_patterns' => [
+                   'unknown_pattern_1' => '(?:\.\./|\.\.)+',
                 ],
             ],
         ];

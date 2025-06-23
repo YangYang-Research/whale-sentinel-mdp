@@ -126,7 +126,7 @@ class ProfileController extends Controller
                 'payload.data.name'  => 'required|string|max:255',
                 'payload.data.id'  => 'required|string|max:255',
                 'payload.data.profile' => 'nullable|array',
-                'payload.data.ip_address' => 'nullable|ip',
+                'payload.data.host_information.ip_address' => 'nullable|ip',
                 'request_created_at' => [
                     'required',
                     'date_format:Y-m-d\TH:i:s\Z',
@@ -152,7 +152,7 @@ class ProfileController extends Controller
             $type = $request['payload']['data']['type'];
             $name = $request['payload']['data']['name'];
             $id = $request['payload']['data']['id'];
-            $ipAddress = $request['payload']['data']['ip_address'];
+            $ipAddress = $request['payload']['data']['host_information']['ip_address'];
             $requestCreatedAt = $request['request_created_at'];
             $newProfileData = $request['payload']['data']['profile'];
 

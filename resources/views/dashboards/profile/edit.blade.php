@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById("detect_http_large_request").checked = !!profile.ws_module_common_attack_detection.detect_http_large_request;
                     document.getElementById("detect_sql_injection").checked = !!profile.ws_module_common_attack_detection.detect_sql_injection;
                     document.getElementById("detect_http_verb_tampering").checked = !!profile.ws_module_common_attack_detection.detect_http_verb_tampering;
-                    document.getElementById("detect_unknow_attack").checked = !!profile.ws_module_common_attack_detection.detect_unknow_attack;
+                    document.getElementById("detect_unknown_attack").checked = !!profile.ws_module_common_attack_detection.detect_unknown_attack;
                 }
 
                 // Secure Headers
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 patternList.innerHTML = "";
 
                 // Danh sách các nhóm pattern bạn quan tâm
-                const patternGroups = ["xss_patterns", "sql_patterns", "unknow_attack_patterns"];
+                const patternGroups = ["xss_patterns", "sql_patterns", "unknown_attack_patterns"];
 
                 patternGroups.forEach(group => {
                     const patterns = profile[group] || {};
@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 detect_http_large_request: document.getElementById("detect_http_large_request").checked,
                 detect_sql_injection: document.getElementById("detect_sql_injection").checked,
                 detect_http_verb_tampering: document.getElementById("detect_http_verb_tampering").checked,
-                detect_unknow_attack: document.getElementById("detect_unknow_attack").checked
+                detect_unknown_attack: document.getElementById("detect_unknown_attack").checked
             };
 
             profile.secure_response_headers = {
@@ -337,7 +337,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Custom regex patterns
             profile.xss_patterns = {};
             profile.sql_patterns = {};
-            profile.unknow_attack_patterns = {};
+            profile.unknown_attack_patterns = {};
 
             document.querySelectorAll(".custom-pattern-item").forEach(item => {
                 const group = item.dataset.group;

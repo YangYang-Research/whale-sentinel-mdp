@@ -5,7 +5,7 @@
         <option value="">-- Select Type Attack --</option>
         <option value="sql_patterns">SQL Injection</option>
         <option value="xss_patterns">Cross Site Scripting</option>
-        <option value="unknow_attack_patterns">Unknow Attack</option>
+        <option value="unknown_attack_patterns">Unknow Attack</option>
     </select>
 </div>
 

@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const largeRequest = document.getElementById("detect_http_large_request");
         const sqlInjection = document.getElementById("detect_sql_injection");
         const verbTampering = document.getElementById("detect_http_verb_tampering");
-        const unknowAttack = document.getElementById("detect_unknow_attack");
+        const unknowAttack = document.getElementById("detect_unknown_attack");
 
         if (commonEnable && xss && largeRequest && sqlInjection && verbTampering) {
             profile.profile.ws_module_common_attack_detection = {
@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 detect_http_large_request: largeRequest.checked,
                 detect_sql_injection: sqlInjection.checked,
                 detect_http_verb_tampering: verbTampering.checked,
-                detect_unknow_attack: unknowAttack.checked
+                detect_unknown_attack: unknowAttack.checked
             };
         }
 
@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const patterns = {
             xss_patterns: {},
             sql_patterns: {},
-            unknow_attack_patterns: {}
+            unknown_attack_patterns: {}
         };
 
         regexItems.forEach(item => {

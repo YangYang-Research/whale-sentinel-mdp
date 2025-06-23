@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
             patternList.innerHTML = "";
 
             // Danh sách các nhóm pattern bạn quan tâm
-            const patternGroups = ["xss_patterns", "sql_patterns", "unknow_attack_patterns"];
+            const patternGroups = ["xss_patterns", "sql_patterns", "unknown_attack_patterns"];
 
             patternGroups.forEach(group => {
                 const patterns = profile[group] || {};
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Custom regex patterns
         profile.xss_patterns = {};
         profile.sql_patterns = {};
-        profile.unknow_attack_patterns = {};
+        profile.unknown_attack_patterns = {};
 
         document.querySelectorAll(".custom-pattern-item").forEach(item => {
             const group = item.dataset.group;

@@ -34,7 +34,7 @@ class WSProfileSeeder extends Seeder
                     'detect_http_large_request' => true,
                     'detect_sql_injection' => true,
                     'detect_http_verb_tampering' => true,
-                    'detect_unknow_attack' => true
+                    'detect_unknown_attack' => true
                 ],
                 'secure_response_headers' => [
                     'enable' => true,
@@ -169,8 +169,8 @@ class WSProfileSeeder extends Seeder
 
                 'http_verb_patterns' => '(?i)(GET|POST|PUT|DELETE)',
                 'max_size_request' => '2',
-                'unknow_attack_patterns' => [
-                   'unknow_pattern_1' => '(?:\.\./|\.\.\\)+',
+                'unknown_attack_patterns' => [
+                   'unknown_pattern_1' => '(?:\.\./|\.\.\\)+',
                 ],
             ],
         ];
