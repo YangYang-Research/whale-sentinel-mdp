@@ -209,6 +209,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("detect_sql_injection").checked = !!profile.ws_module_common_attack_detection.detect_sql_injection;
                 document.getElementById("detect_http_verb_tampering").checked = !!profile.ws_module_common_attack_detection.detect_http_verb_tampering;
                 document.getElementById("detect_unknown_attack").checked = !!profile.ws_module_common_attack_detection.detect_unknown_attack;
+                document.getElementById("detect_insecure_redirect").checked = !!profile.ws_module_common_attack_detection.detect_insecure_redirect;
+                document.getElementById("detect_insecure_file_upload").checked = !!profile.ws_module_common_attack_detection.detect_insecure_file_upload;
             }
 
             // Secure Headers
@@ -273,7 +275,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 detect_http_large_request: document.getElementById("detect_http_large_request").checked,
                 detect_sql_injection: document.getElementById("detect_sql_injection").checked,
                 detect_http_verb_tampering: document.getElementById("detect_http_verb_tampering").checked,
-                detect_unknown_attack: document.getElementById("detect_unknown_attack").checked
+                detect_unknown_attack: document.getElementById("detect_unknown_attack").checked,
+                detect_insecure_redirect: document.getElementById("detect_insecure_redirect").checked,
+                detect_insecure_file_upload: document.getElementById("detect_insecure_file_upload").checked
             },
             secure_response_headers: {
                 enable: document.getElementById("secure_response_headers_enable").checked,

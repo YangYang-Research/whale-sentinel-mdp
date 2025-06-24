@@ -33,4 +33,12 @@
         <input type="checkbox" class="form-check-input" id="detect_unknown_attack" checked>
         <label class="form-check-label">Detect Unknown Attack</label>
     </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="detect_insecure_redirect" checked>
+        <label class="form-check-label">Detect Insecure Redirect</label>
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="detect_insecure_file_upload" checked>
+        <label class="form-check-label">Detect Insecure File Upload</label>
+    </div>
 </div>

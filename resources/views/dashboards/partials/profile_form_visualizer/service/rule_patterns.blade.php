@@ -2,10 +2,11 @@
 <div class="form-group">
     <label>Type</label>
     <select class="form-control" id="regex-type">
-        <option value="">-- Select Type Attack --</option>
-        <option value="sql_patterns">SQL Injection</option>
-        <option value="xss_patterns">Cross Site Scripting</option>
-        <option value="unknown_attack_patterns">Unknow Attack</option>
+        <option value="">-- Select Type --</option>
+        <option value="dectect_sqli">SQL Injection</option>
+        <option value="detect_xss">Cross Site Scripting</option>
+        <option value="detect_unknown_attack">Unknow Attack</option>
+        <option value="secure_redirect">Extend Domain</option>
     </select>
 </div>
 

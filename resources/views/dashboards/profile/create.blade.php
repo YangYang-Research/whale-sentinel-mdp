@@ -74,6 +74,12 @@
                     <div class="col-md-8">
                         @include('dashboards.partials.profile_form_visualizer.service.http_verb_tampering')
                     </div>
+                    <div class="col-md-4">
+                        @include('dashboards.partials.profile_form_visualizer.service.secure_redirect')
+                    </div>
+                    <div class="col-md-8">
+                        @include('dashboards.partials.profile_form_visualizer.service.secure_file_upload')
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
@@ -205,6 +211,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const sqlInjection = document.getElementById("detect_sql_injection");
         const verbTampering = document.getElementById("detect_http_verb_tampering");
         const unknowAttack = document.getElementById("detect_unknown_attack");
+        const insecureRedirect = document.getElementById("detect_insecure_redirect");
+        const insecureFileUpload = document.getElementById("detect_insecure_file_upload");
 
         if (commonEnable && xss && largeRequest && sqlInjection && verbTampering) {
             profile.profile.ws_module_common_attack_detection = {
@@ -213,7 +221,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 detect_http_large_request: largeRequest.checked,
                 detect_sql_injection: sqlInjection.checked,
                 detect_http_verb_tampering: verbTampering.checked,
-                detect_unknown_attack: unknowAttack.checked
+                detect_unknown_attack: unknowAttack.checked,
+                detect_insecure_redirect: insecureRedirect.checked,
+                detect_insecure_file_upload: insecureFileUpload.checked
             };
         }
 

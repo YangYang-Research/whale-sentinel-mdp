@@ -62,11 +62,20 @@
             <div class="form-group" id="partial-service-cad-profile-form">
                 <label>Configure Service Profile</label>
                 <div class="row">
+                    <div class="col-md-12">
+                        @include('dashboards.partials.profile_form_visualizer.service.detect_attack')
+                    </div>
                     <div class="col-md-4">
                         @include('dashboards.partials.profile_form_visualizer.service.http_large_request')
                     </div>
                     <div class="col-md-8">
                         @include('dashboards.partials.profile_form_visualizer.service.http_verb_tampering')
+                    </div>
+                    <div class="col-md-4">
+                        @include('dashboards.partials.profile_form_visualizer.service.secure_redirect')
+                    </div>
+                    <div class="col-md-8">
+                        @include('dashboards.partials.profile_form_visualizer.service.secure_file_upload')
                     </div>
                 </div>
                 <div class="row">
@@ -180,6 +189,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById("detect_sql_injection").checked = !!profile.ws_module_common_attack_detection.detect_sql_injection;
                     document.getElementById("detect_http_verb_tampering").checked = !!profile.ws_module_common_attack_detection.detect_http_verb_tampering;
                     document.getElementById("detect_unknown_attack").checked = !!profile.ws_module_common_attack_detection.detect_unknown_attack;
+                    document.getElementById("detect_insecure_redirect").checked = !!profile.ws_module_common_attack_detection.detect_insecure_redirect;
+                    document.getElementById("detect_insecure_file_upload").checked = !!profile.ws_module_common_attack_detection.detect_insecure_file_upload;
                 }
 
                 // Secure Headers
@@ -215,12 +226,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }
             } else if (profileType === "common-attack-detection-service") {
-                if (profile.max_size_request) {
-                    document.getElementById("http_request_max_size").value = profile.max_size_request || 0;
+                if (profile.detect_http_large_request) {
+                    document.getElementById("detect_http_large_request").checked = !!profile.detect_http_large_request.enable;
+                    document.getElementById("http_request_max_size").value = profile.detect_http_large_request.pattern || 0;
                 }
 
-                if (profile.http_verb_patterns !== undefined) {
-                    const pattern = profile.http_verb_patterns.replace(/^\(\?i\)/, '');
+                if (profile.detect_http_verb_tampering) {
+                    document.getElementById("detect_http_verb_tampering").checked = !!profile.detect_http_verb_tampering.enable;
+
+                    const pattern = profile.detect_http_verb_tampering.pattern.replace(/^\(\?i\)/, '');
                     const match = pattern.match(/\(([^)]+)\)/);
 
                     if (match && match[1]) {
@@ -236,31 +250,79 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
                     }
                 }
+                
+                // XSS
+                if (profile.detect_xss) {
+                    document.getElementById("detect_cross_site_scripting").checked = !!profile.detect_xss.enable;
+                }
+
+                // SQLi
+                if (profile.detect_sqli) {
+                    document.getElementById("detect_sql_injection").checked = !!profile.detect_sqli.enable;
+                }
+
+                // Unknown
+                if (profile.detect_unknown_attack) {
+                    document.getElementById("detect_unknown_attack").checked = !!profile.detect_unknown_attack.enable;
+                }
+
+                // Secure Redirect
+                if (profile.secure_redirect) {
+                    document.getElementById("detect_insecure_redirect").checked = !!profile.secure_redirect.enable;
+                    document.getElementById("secure_redirect_self_domain").checked = !!profile.secure_redirect.self_domain;
+                }
+
+                // Secure File Upload
+                if (profile.secure_file_upload) {
+                    document.getElementById("detect_insecure_file_upload").checked = !!profile.secure_file_upload.enable;
+                    document.getElementById("secure_file_upload_name").checked = !!profile.secure_file_upload.secure_file_name;
+                    document.getElementById("secure_file_upload_content").checked = !!profile.secure_file_upload.secure_file_content;
+                    document.getElementById("secure_file_upload_max_size").value = profile.secure_file_upload.max_size_file || 0;
+                }
 
                 // Custom regex patterns
                 const patternList = document.getElementById("custom-regex-list");
                 patternList.innerHTML = "";
 
-                // Danh sách các nhóm pattern bạn quan tâm
-                const patternGroups = ["xss_patterns", "sql_patterns", "unknown_attack_patterns"];
-
-                patternGroups.forEach(group => {
-                    const patterns = profile[group] || {};
-                    for (const [key, value] of Object.entries(patterns)) {
-                        // Kiểm tra xem pattern có phải là mặc định không (nếu cần)
-                        // Nếu không cần lọc predefined thì có thể bỏ bước này
+                // Hiển thị các pattern của redirect extend domain
+                if (profile.secure_redirect && profile.secure_redirect.extend_domain) {
+                    const redirectExtendPatterns = profile.secure_redirect.extend_domain;
+                    for (const [key, value] of Object.entries(redirectExtendPatterns)) {
                         const item = document.createElement("li");
                         const encodedKey = customEncode(key);
                         const encodedValue = customEncode(value);
 
                         item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-pattern-item");
-                        item.dataset.group = group;
+                        item.dataset.group = "secure_redirect";
                         item.dataset.key = key;
                         item.dataset.value = value;
                         item.innerHTML = `
                             <span><strong>${encodedKey}</strong>: <code>${encodedValue}</code></span>
                             <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
                         patternList.appendChild(item);
+                    }
+                }
+
+                // Danh sách các nhóm pattern cần xử lý
+                const patternGroups = ["detect_xss", "detect_sqli", "detect_unknown_attack"];
+
+                patternGroups.forEach(group => {
+                    if (profile[group] && profile[group].patterns) {
+                        const patterns = profile[group].patterns;
+                        for (const [key, value] of Object.entries(patterns)) {
+                            const item = document.createElement("li");
+                            const encodedKey = customEncode(key);
+                            const encodedValue = customEncode(value);
+
+                            item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-pattern-item");
+                            item.dataset.group = group;
+                            item.dataset.key = key;
+                            item.dataset.value = value;
+                            item.innerHTML = `
+                                <span><strong>${encodedKey}</strong>: <code>${encodedValue}</code></span>
+                                <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
+                            patternList.appendChild(item);
+                        }
                     }
                 });
             }
@@ -302,7 +364,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 detect_http_large_request: document.getElementById("detect_http_large_request").checked,
                 detect_sql_injection: document.getElementById("detect_sql_injection").checked,
                 detect_http_verb_tampering: document.getElementById("detect_http_verb_tampering").checked,
-                detect_unknown_attack: document.getElementById("detect_unknown_attack").checked
+                detect_unknown_attack: document.getElementById("detect_unknown_attack").checked,
+                detect_insecure_redirect: document.getElementById("detect_insecure_redirect").checked,
+                detect_insecure_file_upload: document.getElementById("detect_insecure_file_upload").checked
             };
 
             profile.secure_response_headers = {
@@ -324,7 +388,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (isCADService) {
-            profile.max_size_request = parseInt(document.getElementById("http_request_max_size").value) || 0;
+            profile.detect_http_large_request = {
+                enable: document.getElementById("detect_http_large_request").checked,
+                pattern: parseInt(document.getElementById("http_request_max_size").value) || 0,
+            }
 
             // HTTP Verb Patterns
             const allMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
@@ -332,23 +399,64 @@ document.addEventListener("DOMContentLoaded", function () {
                 const checkbox = document.getElementById("method_" + method.toLowerCase());
                 return checkbox && checkbox.checked;
             });
-            profile.http_verb_patterns = `(?i)(${enabledMethods.join('|')})`;
+            profile.detect_http_verb_tampering = {
+                enable: document.getElementById("detect_http_verb_tampering").checked,
+                pattern: `(?i)(${enabledMethods.join('|')})`,
+            } 
 
+            // XSS
+            profile.detect_xss = {
+                enable: document.getElementById("detect_cross_site_scripting").checked,
+            }
+
+            // SQLi
+            profile.detect_sqli = {
+                enable: document.getElementById("detect_sql_injection").checked,
+            }
+
+            // Unknown
+            profile.detect_unknown_attack = {
+                enable: document.getElementById("detect_unknown_attack").checked,
+            }
+
+            // Secure Redirect
+            profile.secure_redirect = {
+                enable: document.getElementById("detect_insecure_redirect").checked,
+                self_domain: document.getElementById("secure_redirect_self_domain").checked,
+            }
+
+            // Secure File Upload 
+            profile.secure_file_upload = {
+                enable: document.getElementById("detect_insecure_file_upload").checked,
+                secure_file_name: document.getElementById("secure_file_upload_name").checked,
+                secure_file_content: document.getElementById("secure_file_upload_content").checked,
+                max_size_file: parseInt(document.getElementById("secure_file_upload_max_size").value) || 0,
+            }
+           
             // Custom regex patterns
-            profile.xss_patterns = {};
-            profile.sql_patterns = {};
-            profile.unknown_attack_patterns = {};
+            profile.detect_xss.patterns = {};
+            profile.detect_sqli.patterns = {};
+            profile.detect_unknown_attack.patterns = {};
+            profile.secure_redirect.extend_domain = {};
 
             document.querySelectorAll(".custom-pattern-item").forEach(item => {
                 const group = item.dataset.group;
                 const key = item.dataset.key;
                 const value = item.dataset.value;
 
-                if (!profile[group]) {
-                    profile[group] = {};
+                if (group === 'secure_redirect') {
+                    // Ghi vào profile.secure_redirect.extend_domain
+                    if (!profile.secure_redirect.extend_domain) {
+                        profile.secure_redirect.extend_domain = {};
+                    }
+                    profile.secure_redirect.extend_domain[key] = value;
+                } else {
+                    // Ghi vào profile[group].patterns
+                    if (!profile[group].patterns) {
+                        profile[group].patterns = {};
+                    }
+                    profile[group].patterns[key] = value;
                 }
-
-                profile[group][key] = value;
             });
 
 
