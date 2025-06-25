@@ -136,18 +136,18 @@ class WSServiceSeeder extends Seeder
                         'unknown_pattern_1' => '(?:\.\./|\.\.\\)+',
                     ]
                 ],
-                'secure_redirect' => [
+                'detect_insecure_redirect' => [
                     'enable' => true,
-                    'self_domain' => true,
-                    'extend_domain' => [
+                    'extend_domain' => true,
+                    'patterns' => [
                         'extend_domain_1' => '^example\.com$',
                     ],
                 ],
-                'secure_file_upload' => [
+                'detect_insecure_file_upload' => [
                     'enable' => true,
-                    'max_size_file' => 2, // MB
-                    'secure_file_name' => true,
-                    'secure_file_content' => true,
+                    'file_size' => 2, // MB
+                    'file_name' => true,
+                    'file_content' => true,
                 ],
             ],
         ];

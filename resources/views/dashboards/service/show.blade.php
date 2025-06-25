@@ -43,10 +43,10 @@
                     @include('dashboards.partials.profile_form_visualizer.service.http_verb_tampering')
                 </div>
                 <div class="col-md-4">
-                    @include('dashboards.partials.profile_form_visualizer.service.secure_redirect')
+                    @include('dashboards.partials.profile_form_visualizer.service.insecure_redirect')
                 </div>
                 <div class="col-md-8">
-                    @include('dashboards.partials.profile_form_visualizer.service.secure_file_upload')
+                    @include('dashboards.partials.profile_form_visualizer.service.insecure_file_upload')
                 </div>
             </div>
             <div class="row">
@@ -151,44 +151,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("cad_detect_unknown_attack").checked = !!profile.detect_unknown_attack.enable;
             }
 
-            // Secure Redirect
-            if (profile.secure_redirect) {
-                document.getElementById("cad_detect_insecure_redirect").checked = !!profile.secure_redirect.enable;
-                document.getElementById("secure_redirect_self_domain").checked = !!profile.secure_redirect.self_domain;
+            // Insecure Redirect
+            if (profile.detect_insecure_redirect) {
+                document.getElementById("cad_detect_insecure_redirect").checked = !!profile.detect_insecure_redirect.enable;
+                document.getElementById("insecure_redirect_extend_domain").checked = !!profile.detect_insecure_redirect.extend_domain;
             }
 
-            // Secure File Upload
-            if (profile.secure_file_upload) {
-                document.getElementById("cad_detect_insecure_file_upload").checked = !!profile.secure_file_upload.enable;
-                document.getElementById("secure_file_upload_name").checked = !!profile.secure_file_upload.secure_file_name;
-                document.getElementById("secure_file_upload_content").checked = !!profile.secure_file_upload.secure_file_content;
-                document.getElementById("secure_file_upload_max_size").value = profile.secure_file_upload.max_size_file || 0;
+            // Insecure File Upload
+            if (profile.detect_insecure_file_upload) {
+                document.getElementById("cad_detect_insecure_file_upload").checked = !!profile.detect_insecure_file_upload.enable;
+                document.getElementById("secure_file_upload_name").checked = !!profile.detect_insecure_file_upload.file_name;
+                document.getElementById("secure_file_upload_content").checked = !!profile.detect_insecure_file_upload.file_content;
+                document.getElementById("secure_file_upload_max_size").value = profile.detect_insecure_file_upload.file_size || 0;
             }
 
             // Custom regex patterns
             const patternList = document.getElementById("custom-regex-list");
             patternList.innerHTML = "";
 
-            // Hiển thị các pattern của redirect extend domain
-            if (profile.secure_redirect && profile.secure_redirect.extend_domain) {
-                const redirectExtendPatterns = profile.secure_redirect.extend_domain;
-                for (const [key, value] of Object.entries(redirectExtendPatterns)) {
-                    const item = document.createElement("li");
-                    const encodedKey = customEncode(key);
-                    const encodedValue = customEncode(value);
-
-                    item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-pattern-item");
-                    item.dataset.group = "secure_redirect";
-                    item.dataset.key = key;
-                    item.dataset.value = value;
-                    item.innerHTML = `
-                        <span><strong>${encodedKey}</strong>: <code>${encodedValue}</code></span>`;
-                    patternList.appendChild(item);
-                }
-            }
-
             // Danh sách các nhóm pattern cần xử lý
-            const patternGroups = ["detect_xss", "detect_sqli", "detect_unknown_attack"];
+            const patternGroups = ["detect_xss", "detect_sqli", "detect_unknown_attack", "detect_insecure_redirect"];
 
             patternGroups.forEach(group => {
                 if (profile[group] && profile[group].patterns) {
@@ -247,44 +229,36 @@ document.addEventListener("DOMContentLoaded", function () {
             enable: document.getElementById("cad_detect_unknown_attack").checked,
         }
 
-        // Secure Redirect
-        profile.secure_redirect = {
+        // Insecure Redirect
+        profile.detect_insecure_redirect = {
             enable: document.getElementById("cad_detect_insecure_redirect").checked,
-            self_domain: document.getElementById("secure_redirect_self_domain").checked,
+            extend_domain: document.getElementById("insecure_redirect_extend_domain").checked,
         }
 
-        // Secure File Upload 
-        profile.secure_file_upload = {
+        // Insecure File Upload 
+        profile.detect_insecure_file_upload = {
             enable: document.getElementById("cad_detect_insecure_file_upload").checked,
-            secure_file_name: document.getElementById("secure_file_upload_name").checked,
-            secure_file_content: document.getElementById("secure_file_upload_content").checked,
-            max_size_file: parseInt(document.getElementById("secure_file_upload_max_size").value) || 0,
+            file_name: document.getElementById("secure_file_upload_name").checked,
+            file_content: document.getElementById("secure_file_upload_content").checked,
+            file_size: parseInt(document.getElementById("secure_file_upload_max_size").value) || 0,
         }
         
         // Custom regex patterns
         profile.detect_xss.patterns = {};
         profile.detect_sqli.patterns = {};
         profile.detect_unknown_attack.patterns = {};
-        profile.secure_redirect.extend_domain = {};
+        profile.detect_insecure_redirect.patterns = {};
 
         document.querySelectorAll(".custom-pattern-item").forEach(item => {
             const group = item.dataset.group;
             const key = item.dataset.key;
             const value = item.dataset.value;
 
-            if (group === 'secure_redirect') {
-                // Ghi vào profile.secure_redirect.extend_domain
-                if (!profile.secure_redirect.extend_domain) {
-                    profile.secure_redirect.extend_domain = {};
-                }
-                profile.secure_redirect.extend_domain[key] = value;
-            } else {
-                // Ghi vào profile[group].patterns
-                if (!profile[group].patterns) {
-                    profile[group].patterns = {};
-                }
-                profile[group].patterns[key] = value;
+            // Ghi vào profile[group].patterns
+            if (!profile[group].patterns) {
+                profile[group].patterns = {};
             }
+            profile[group].patterns[key] = value;
         });
 
         // Nếu có rule_patterns riêng thì giữ lại

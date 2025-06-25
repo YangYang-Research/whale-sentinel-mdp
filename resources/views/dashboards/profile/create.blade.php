@@ -25,7 +25,7 @@
                 <select class="form-control" id="type" name="type">
                     <option value="">-- Select Profile Type --</option>
                     <option value="agent">Agent</option>
-                    <option value="common-attack-detection-service" selected>common-attack-detection-service</option>
+                    <option value="common-attack-detection-service">common-attack-detection-service</option>
                 </select>
             </div>
 
@@ -78,10 +78,10 @@
                         @include('dashboards.partials.profile_form_visualizer.service.http_verb_tampering')
                     </div>
                     <div class="col-md-4">
-                        @include('dashboards.partials.profile_form_visualizer.service.secure_redirect')
+                        @include('dashboards.partials.profile_form_visualizer.service.insecure_redirect')
                     </div>
                     <div class="col-md-8">
-                        @include('dashboards.partials.profile_form_visualizer.service.secure_file_upload')
+                        @include('dashboards.partials.profile_form_visualizer.service.insecure_file_upload')
                     </div>
                 </div>
                 <div class="row">
@@ -309,18 +309,18 @@ document.addEventListener("DOMContentLoaded", function () {
             enable: document.getElementById("cad_detect_unknown_attack").checked,
         }
 
-        // Secure Redirect
-        profile.profile.secure_redirect = {
+        // Insecure Redirect
+        profile.profile.detect_insecure_redirect = {
             enable: document.getElementById("cad_detect_insecure_redirect").checked,
-            self_domain: document.getElementById("secure_redirect_self_domain").checked,
+            extend_domain: document.getElementById("insecure_redirect_extend_domain").checked,
         }
 
-        // Secure File Upload 
-        profile.profile.secure_file_upload = {
+        // Insecure File Upload 
+        profile.profile.detect_insecure_file_upload = {
             enable: document.getElementById("cad_detect_insecure_file_upload").checked,
-            secure_file_name: document.getElementById("secure_file_upload_name").checked,
-            secure_file_content: document.getElementById("secure_file_upload_content").checked,
-            max_size_file: parseInt(document.getElementById("secure_file_upload_max_size").value) || 0,
+            file_name: document.getElementById("secure_file_upload_name").checked,
+            file_content: document.getElementById("secure_file_upload_content").checked,
+            file_size: parseInt(document.getElementById("secure_file_upload_max_size").value) || 0,
         }
 
         // Reset lại các patterns ban đầu
@@ -330,7 +330,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         profile.profile.detect_unknown_attack.patterns = {};
 
-        profile.profile.secure_redirect.extend_domain = {};
+        profile.profile.detect_insecure_redirect.patterns = {};
 
         // Duyệt qua các regex-item
         document.querySelectorAll(".custom-regex-item").forEach(item => {
@@ -338,24 +338,16 @@ document.addEventListener("DOMContentLoaded", function () {
             const key = item.dataset.key;
             const value = item.dataset.value;
 
-            if (group === 'secure_redirect') {
-                // Ghi vào profile.profile.secure_redirect.extend_domain
-                if (!profile.profile.secure_redirect.extend_domain) {
-                    profile.profile.secure_redirect.extend_domain = {};
-                }
-                profile.profile.secure_redirect.extend_domain[key] = value;
-            } else {
-                // Đảm bảo profile.profile[group] tồn tại
-                if (!profile.profile[group]) {
-                    profile.profile[group] = {};
-                }
-                // Đảm bảo patterns tồn tại
-                if (!profile.profile[group].patterns) {
-                    profile.profile[group].patterns = {};
-                }
-                // Ghi vào patterns
-                profile.profile[group].patterns[key] = value;
+            // Đảm bảo profile.profile[group] tồn tại
+            if (!profile.profile[group]) {
+                profile.profile[group] = {};
             }
+            // Đảm bảo patterns tồn tại
+            if (!profile.profile[group].patterns) {
+                profile.profile[group].patterns = {};
+            }
+            // Ghi vào patterns
+            profile.profile[group].patterns[key] = value;
         });
 
         const jsonStr = JSON.stringify(profile, null, 4);
