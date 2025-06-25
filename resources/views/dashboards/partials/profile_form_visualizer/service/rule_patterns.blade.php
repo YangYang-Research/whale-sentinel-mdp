@@ -3,7 +3,7 @@
     <label>Type</label>
     <select class="form-control" id="regex-type">
         <option value="">-- Select Type --</option>
-        <option value="dectect_sqli">SQL Injection</option>
+        <option value="detect_sqli">SQL Injection</option>
         <option value="detect_xss">Cross Site Scripting</option>
         <option value="detect_unknown_attack">Unknow Attack</option>
         <option value="secure_redirect">Extend Domain</option>

@@ -25,7 +25,7 @@
                 <select class="form-control" id="type" name="type">
                     <option value="">-- Select Profile Type --</option>
                     <option value="agent">Agent</option>
-                    <option value="common-attack-detection-service">common-attack-detection-service</option>
+                    <option value="common-attack-detection-service" selected>common-attack-detection-service</option>
                 </select>
             </div>
 
@@ -68,6 +68,9 @@
             <div class="form-group" id="partial-service-cad-profile-form" style="display: none;">
                 <label>Configure Service Profile</label>
                 <div class="row">
+                    <div class="col-md-12">
+                        @include('dashboards.partials.profile_form_visualizer.service.detect_attack')
+                    </div>
                     <div class="col-md-4">
                         @include('dashboards.partials.profile_form_visualizer.service.http_large_request')
                     </div>
@@ -274,38 +277,86 @@ document.addEventListener("DOMContentLoaded", function () {
             profile: {}
         };
 
+        profile.profile.detect_http_large_request = {
+            enable: document.getElementById("cad_detect_http_large_request").checked,
+            pattern: parseInt(document.getElementById("http_request_max_size").value) || 0,
+        }
         // HTTP request size & method
-        const httpLargeRequest = document.getElementById("http_request_max_size");
         const selectedHttpMethods = Array.from(document.querySelectorAll('input[name="http_methods[]"]:checked'))
             .map(el => el.value.toUpperCase());
 
-        if (httpLargeRequest && selectedHttpMethods.length > 0) {
+        if (selectedHttpMethods.length > 0) {
             const httpVerbPattern = `(?i)(${selectedHttpMethods.join('|')})`;
-
-            profile.profile.http_verb_patterns = httpVerbPattern;
-            profile.profile.max_size_request = httpLargeRequest.value;
+            
+            profile.profile.detect_http_verb_tampering = {
+                enable: document.getElementById("cad_detect_http_verb_tampering").checked,
+                pattern: httpVerbPattern,
+            } 
         }
 
-        // Custom regex patterns (XSS, SQL, Unknown Attack)
-        const regexItems = document.querySelectorAll(".custom-regex-item");
-        const patterns = {
-            xss_patterns: {},
-            sql_patterns: {},
-            unknown_attack_patterns: {}
-        };
+        // XSS
+        profile.profile.detect_xss = {
+            enable: document.getElementById("cad_detect_cross_site_scripting").checked,
+        }
 
-        regexItems.forEach(item => {
-            const type = item.dataset.type; // ex: xss_patterns
+        // SQLi
+        profile.profile.detect_sqli = {
+            enable: document.getElementById("cad_detect_sql_injection").checked,
+        }
+
+        // Unknown
+        profile.profile.detect_unknown_attack = {
+            enable: document.getElementById("cad_detect_unknown_attack").checked,
+        }
+
+        // Secure Redirect
+        profile.profile.secure_redirect = {
+            enable: document.getElementById("cad_detect_insecure_redirect").checked,
+            self_domain: document.getElementById("secure_redirect_self_domain").checked,
+        }
+
+        // Secure File Upload 
+        profile.profile.secure_file_upload = {
+            enable: document.getElementById("cad_detect_insecure_file_upload").checked,
+            secure_file_name: document.getElementById("secure_file_upload_name").checked,
+            secure_file_content: document.getElementById("secure_file_upload_content").checked,
+            max_size_file: parseInt(document.getElementById("secure_file_upload_max_size").value) || 0,
+        }
+
+        // Reset lại các patterns ban đầu
+        profile.profile.detect_xss.patterns = {};
+
+        profile.profile.detect_sqli.patterns = {};
+
+        profile.profile.detect_unknown_attack.patterns = {};
+
+        profile.profile.secure_redirect.extend_domain = {};
+
+        // Duyệt qua các regex-item
+        document.querySelectorAll(".custom-regex-item").forEach(item => {
+            const group = item.dataset.group;
             const key = item.dataset.key;
             const value = item.dataset.value;
 
-            if (type && key && value && patterns[type]) {
-                patterns[type][key] = value;
+            if (group === 'secure_redirect') {
+                // Ghi vào profile.profile.secure_redirect.extend_domain
+                if (!profile.profile.secure_redirect.extend_domain) {
+                    profile.profile.secure_redirect.extend_domain = {};
+                }
+                profile.profile.secure_redirect.extend_domain[key] = value;
+            } else {
+                // Đảm bảo profile.profile[group] tồn tại
+                if (!profile.profile[group]) {
+                    profile.profile[group] = {};
+                }
+                // Đảm bảo patterns tồn tại
+                if (!profile.profile[group].patterns) {
+                    profile.profile[group].patterns = {};
+                }
+                // Ghi vào patterns
+                profile.profile[group].patterns[key] = value;
             }
         });
-
-        // Merge into profile
-        Object.assign(profile.profile, patterns);
 
         const jsonStr = JSON.stringify(profile, null, 4);
         if (textarea) textarea.value = jsonStr;
@@ -420,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center", "custom-regex-item");
                 item.dataset.key = encodedKey;
                 item.dataset.value = encodedValue;
-                item.dataset.type = type;
+                item.dataset.group = type;
                 item.innerHTML = `<span><strong>[${type}] ${encodedKey}</strong>: <code>${encodedValue}</code></span>
                                 <button class="btn btn-sm btn-danger btn-remove">Remove</button>`;
                 regexList.appendChild(item);
