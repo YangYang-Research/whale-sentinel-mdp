@@ -227,12 +227,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             } else if (profileType === "common-attack-detection-service") {
                 if (profile.detect_http_large_request) {
-                    document.getElementById("detect_http_large_request").checked = !!profile.detect_http_large_request.enable;
+                    document.getElementById("cad_detect_http_large_request").checked = !!profile.detect_http_large_request.enable;
                     document.getElementById("http_request_max_size").value = profile.detect_http_large_request.pattern || 0;
                 }
 
                 if (profile.detect_http_verb_tampering) {
-                    document.getElementById("detect_http_verb_tampering").checked = !!profile.detect_http_verb_tampering.enable;
+                    document.getElementById("cad_detect_http_verb_tampering").checked = !!profile.detect_http_verb_tampering.enable;
 
                     const pattern = profile.detect_http_verb_tampering.pattern.replace(/^\(\?i\)/, '');
                     const match = pattern.match(/\(([^)]+)\)/);
@@ -253,28 +253,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 // XSS
                 if (profile.detect_xss) {
-                    document.getElementById("detect_cross_site_scripting").checked = !!profile.detect_xss.enable;
+                    document.getElementById("cad_detect_cross_site_scripting").checked = !!profile.detect_xss.enable;
                 }
 
                 // SQLi
                 if (profile.detect_sqli) {
-                    document.getElementById("detect_sql_injection").checked = !!profile.detect_sqli.enable;
+                    document.getElementById("cad_detect_sql_injection").checked = !!profile.detect_sqli.enable;
                 }
 
                 // Unknown
                 if (profile.detect_unknown_attack) {
-                    document.getElementById("detect_unknown_attack").checked = !!profile.detect_unknown_attack.enable;
+                    document.getElementById("cad_detect_unknown_attack").checked = !!profile.detect_unknown_attack.enable;
                 }
 
                 // Secure Redirect
                 if (profile.secure_redirect) {
-                    document.getElementById("detect_insecure_redirect").checked = !!profile.secure_redirect.enable;
+                    document.getElementById("cad_detect_insecure_redirect").checked = !!profile.secure_redirect.enable;
                     document.getElementById("secure_redirect_self_domain").checked = !!profile.secure_redirect.self_domain;
                 }
 
                 // Secure File Upload
                 if (profile.secure_file_upload) {
-                    document.getElementById("detect_insecure_file_upload").checked = !!profile.secure_file_upload.enable;
+                    document.getElementById("cad_detect_insecure_file_upload").checked = !!profile.secure_file_upload.enable;
                     document.getElementById("secure_file_upload_name").checked = !!profile.secure_file_upload.secure_file_name;
                     document.getElementById("secure_file_upload_content").checked = !!profile.secure_file_upload.secure_file_content;
                     document.getElementById("secure_file_upload_max_size").value = profile.secure_file_upload.max_size_file || 0;
@@ -389,7 +389,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (isCADService) {
             profile.detect_http_large_request = {
-                enable: document.getElementById("detect_http_large_request").checked,
+                enable: document.getElementById("cad_detect_http_large_request").checked,
                 pattern: parseInt(document.getElementById("http_request_max_size").value) || 0,
             }
 
@@ -400,34 +400,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 return checkbox && checkbox.checked;
             });
             profile.detect_http_verb_tampering = {
-                enable: document.getElementById("detect_http_verb_tampering").checked,
+                enable: document.getElementById("cad_detect_http_verb_tampering").checked,
                 pattern: `(?i)(${enabledMethods.join('|')})`,
             } 
 
             // XSS
             profile.detect_xss = {
-                enable: document.getElementById("detect_cross_site_scripting").checked,
+                enable: document.getElementById("cad_detect_cross_site_scripting").checked,
             }
 
             // SQLi
             profile.detect_sqli = {
-                enable: document.getElementById("detect_sql_injection").checked,
+                enable: document.getElementById("cad_detect_sql_injection").checked,
             }
 
             // Unknown
             profile.detect_unknown_attack = {
-                enable: document.getElementById("detect_unknown_attack").checked,
+                enable: document.getElementById("cad_detect_unknown_attack").checked,
             }
 
             // Secure Redirect
             profile.secure_redirect = {
-                enable: document.getElementById("detect_insecure_redirect").checked,
+                enable: document.getElementById("cad_detect_insecure_redirect").checked,
                 self_domain: document.getElementById("secure_redirect_self_domain").checked,
             }
 
             // Secure File Upload 
             profile.secure_file_upload = {
-                enable: document.getElementById("detect_insecure_file_upload").checked,
+                enable: document.getElementById("cad_detect_insecure_file_upload").checked,
                 secure_file_name: document.getElementById("secure_file_upload_name").checked,
                 secure_file_content: document.getElementById("secure_file_upload_content").checked,
                 max_size_file: parseInt(document.getElementById("secure_file_upload_max_size").value) || 0,
