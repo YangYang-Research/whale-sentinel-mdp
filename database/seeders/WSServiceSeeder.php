@@ -133,7 +133,7 @@ class WSServiceSeeder extends Seeder
                 'detect_unknown_attack' => [
                     'enable' => true,
                     'patterns' => [
-                        'unknown_pattern_1' => '(?:\.\./|\.\.\\)+',
+                        'unknown_pattern_1' => '(?:\.\./|\.\.\)+',
                     ]
                 ],
                 'detect_insecure_redirect' => [
